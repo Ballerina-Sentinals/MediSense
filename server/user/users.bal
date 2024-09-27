@@ -19,10 +19,10 @@ service / on new http:Listener(8080) {
 
     resource function post loginUser(UserLogin user) returns LoginResponse|error {
         // Query the database to find the user
-        string query = "SELECT username, password FROM users WHERE username = ?";
+        sql:ParameterizedQuery sqlQuery = `SELECT from users (username, email) VALUES (${user.username}, ${user.password})`;
 
         // Execute the query with the provided username
-        stream<sql:Row, error>? result = dbClient->query(query, user.username);
+        sql:ExecutionResult result = check dbClient->execute(sqlQuery);
 
         // Check if the query returned a result
         if result is () {
@@ -32,9 +32,9 @@ service / on new http:Listener(8080) {
 
         // Fetch the result from the stream
         UserLogin dbUser = {};
-        error? e = result.forEach(function(sql:Row row) {
-            dbUser.username = check row.getString("username");
-            dbUser.password = check row.getString("password");
+        error? e = result.forEach(function(record {| string username; string password; |} row) {
+            dbUser.username = row.username;
+            dbUser.password = row.password;
         });
 
         // Close the stream
