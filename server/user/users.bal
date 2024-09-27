@@ -1,5 +1,7 @@
 import ballerina/http;
 import ballerina/log;
+import ballerinax/mysql;
+import ballerina/sql;
 
 type UserLogin record {
     string username;
@@ -10,29 +12,42 @@ type LoginResponse record {
     string username;
 };
 
-final map<UserLogin> users = {
-    "john": {username: "john", password: "password123"},
-    "jane": {username: "jane", password: "mypassword"}
-};
+// Define MySQL database configurations
+mysql:Client dbClient = check new (user = "bill", password = "passpass", database = "Ballerina", host = "localhost", port = 3306);
 
 service / on new http:Listener(8080) {
 
     resource function post loginUser(UserLogin user) returns LoginResponse|error {
-        // Fetch the user record from the hardcoded JSON
-        UserLogin? dbUser = users[user.username];
+        // Query the database to find the user
+        string query = "SELECT username, password FROM users WHERE username = ?";
 
-        // Check if the user exists and verify the password
-        if dbUser is () || dbUser.password != user.password {
-            log:printWarn("Login failed for username " + user.username);
+        // Execute the query with the provided username
+        stream<sql:Row, error>? result = dbClient->query(query, user.username);
+
+        // Check if the query returned a result
+        if result is () {
+            log:printWarn("Login failed: User not found for username " + user.username);
             return error("Invalid credentials");
         }
 
+        // Fetch the result from the stream
+        UserLogin dbUser = {};
+        error? e = result.forEach(function(sql:Row row) {
+            dbUser.username = check row.getString("username");
+            dbUser.password = check row.getString("password");
+        });
 
-        log:printInfo("User " + user.username + " logged in successfully on " );
+        // Close the stream
+        result.close();
 
-        // Return response with username
-        return {
-            username: dbUser.username
-        };
+        // Verify the password
+        if dbUser.password != user.password {
+            log:printWarn("Login failed: Incorrect password for username " + user.username);
+            return error("Invalid credentials");
+        }
+
+        // Log and return success response
+        log:printInfo("User " + user.username + " logged in successfully");
+        return { username: dbUser.username };
     }
 }
