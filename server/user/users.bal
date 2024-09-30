@@ -4,6 +4,9 @@ import ballerinax/mysql;
 import ballerina/sql;
 import ballerina/io;
 import ballerinax/java.jdbc;
+import  ballerinax/h2.driver as _;
+
+
 
 
 type UserLogin record {
@@ -21,11 +24,15 @@ type LoginResponse record {
 
 // Define MySQL database configurations
 mysql:Client dbClient = check new (user = "bill", password = "passpass", database = "Ballerina", host = "localhost", port = 3306);
-function init() {
-    // Print a success message when the connection is established
-    io:println("Successfully connected to the database.");
-}
+
 service / on new http:Listener(8080) {
+    http:Client sentimentClient;
+    sql:Client dbClient;
+
+    fucntion init() returns error? {
+        self.sentimentClient = check new ("http://localhost:9000/api");
+        self.dbClient = new jdbc:Client("jdbc:h2:./databases/SOCIAL_MEDIA");
+
     
     resource function get testConnection() returns string {
         return "Database connection is active!";
@@ -73,7 +80,8 @@ service / on new http:Listener(8080) {
 
     // Log and return success response
     log:printInfo("User " + user.username + " logged in successfully");
-    return { username: dbUser.username };
+    return { username:_ID, time , madicines
+Emergency_info = dbUser.username };
 }
 
 }
