@@ -1,87 +1,47 @@
 import ballerina/http;
-import ballerina/log;
 import ballerinax/mysql;
 import ballerina/sql;
-import ballerina/io;
-import ballerinax/java.jdbc;
-import  ballerinax/h2.driver as _;
 
+// MySQL Database configuration
+configurable string dbUser = "bill";
+configurable string dbPassword = "passpass";
+configurable string dbHost = "localhost";
+configurable int dbPort = 3306;
+configurable string dbName = "hrms";
 
+// Initialize MySQL client
+mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
+// Define HTTP listener
+listener http:Listener loginListener = new(8080);
 
-type UserLogin record {
-    string username;
-    string password;
-};
+// Define service
+service /user on loginListener {
 
-type LoginResponse record {
-    string username;
-};
+    resource function post login(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        string username = (check payload.username).toString();
+        string password = (check payload.password).toString();
 
+        // Prepare the query with parameter
+        sql:ParameterizedQuery query = `SELECT password FROM users WHERE username = ${username}`;
 
+        // Execute the query
+        stream<record {| string password; |}, sql:Error?> resultStream = dbClient->query(query);
+        record {|record {|string password;|} value;|}|sql:Error? result = resultStream.next();
 
+        if result is sql:Error {
+            check caller->respond("Error occurred while querying the database");
+        } else if result is () {
+            check caller->respond("Invalid username or password");
+        } else {
+            string storedPassword = result.value.password;
 
-
-// Define MySQL database configurations
-mysql:Client dbClient = check new (user = "bill", password = "passpass", database = "Ballerina", host = "localhost", port = 3306);
-
-service / on new http:Listener(8080) {
-    http:Client sentimentClient;
-    sql:Client dbClient;
-
-    fucntion init() returns error? {
-        self.sentimentClient = check new ("http://localhost:9000/api");
-        self.dbClient = new jdbc:Client("jdbc:h2:./databases/SOCIAL_MEDIA");
-
-    
-    resource function get testConnection() returns string {
-        return "Database connection is active!";
+            if storedPassword == password {
+                check caller->respond("Login successful");
+            } else {
+                check caller->respond("Invalid username or password");
+            }
+        }
     }
-    
-// Define the response type
-    
-    resource function post loginUser(UserLogin user) returns LoginResponse|error {
-    // Correct SQL query to fetch username and password
-    sql:ParameterizedQuery sqlQuery = `SELECT username, password FROM users WHERE username = ${user.username}`;
-
-    // Execute the query and get the result stream
-    table<record {| string username; string password; |}> key(username) result = table[dbClient->query(sqlQuery)];
-    io:println(result.toArray());
-
-    // Initialize a variable to hold the fetched user data
-    UserLogin dbUser = { username: "", password: "" };
-
-    // Fetch the first row from the result stream using next()
-    var rowResult = result.next();
-    io:println(rowResult);
-
-    if rowResult is () {
-        // No user was found
-        log:printWarn("Login failed: No record found for username " + user.username);
-        return error("Invalid credentials");
-    } else if rowResult is sql:Error {
-        // Handle SQL error
-        log:printError("Error querying database", 'error = rowResult);
-        return error("Database error");
-    } else {
-        // Assign the fetched values to dbUser
-        dbUser.username = rowResult.value.username;
-        dbUser.password = rowResult.value.password;
-    }
-
-    // Close the result stream after processing
-    check result.close();
-
-    // Verify the password
-    if dbUser.password != user.password {
-        log:printWarn("Login failed: Incorrect password for username " + user.username);
-        return error("Invalid credentials");
-    }
-
-    // Log and return success response
-    log:printInfo("User " + user.username + " logged in successfully");
-    return { username:_ID, time , madicines
-Emergency_info = dbUser.username };
-}
-
 }
