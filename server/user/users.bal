@@ -2,6 +2,7 @@ import ballerina/http;
 import ballerina/sql;
 import ballerinax/mysql;
 
+
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "2003";

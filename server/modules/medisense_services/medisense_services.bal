@@ -1,9 +1,11 @@
+import ballerinax/mysql.driver as _;
 import ballerina/http;
 // import ballerina/io;
 // import ballerina/sql;
 import ballerinax/mysql;
 
-mysql:Client dbClient = check new (user = "root", password = "root", database = "medisense", host = "localhost", port = 3306);
+mysql:Client dbClient = check new (host = "localhost", user = "root", password = "root", database = "medisense", port = 3306, options = {
+});
 
 service /v1 on new http:Listener(8080) {
 
