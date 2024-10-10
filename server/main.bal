@@ -4,17 +4,19 @@ import ballerina/sql;
 import ballerinax/mysql;
 
 // MySQL Database configuration
-configurable string dbUser = "bill";
-configurable string dbPassword = "passpass";
+configurable string dbUser = "root";
+configurable string dbPassword = "2003";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
+
 
 
 type User record {|
     int user_id;
     
 |};
+
 type Patient record {
     int id;
     string name;
@@ -32,6 +34,7 @@ listener http:Listener loginListener = new (8080);
 
 // Define service
 service /user on loginListener {
+
 
    resource function post login(http:Request req) returns sql:Error|error|int|error? {
     // Fetch and validate the JSON payload
@@ -122,10 +125,33 @@ service /user on loginListener {
 
         if e is sql:Error {
             return e; // Return error if any occurred during iteration
+
         }
 
         return patients; // Return the array of patients
     }
+
+    // resource function get getAllPatients() returns sql:Error|Patient[] {
+    //     string query = "SELECT id, name, dob, nic, doctor_id, caretaker_id FROM patients";
+
+    //     // Execute the query and fetch the results
+    //     stream<Patient, sql:Error?> resultStream = dbClient->query(query);
+
+    //     // Initialize an empty array to hold the patients
+    //     Patient[] patients = [];
+
+    //     // Iterate over the result stream and populate the array
+    //     error? e = resultStream.forEach(function(Patient patient) {
+    //         patients.push(patient);
+    //     });
+
+    //     if e is sql:Error {
+    //         return e; // Return error if any
+    //     }
+
+    //     return patients; // Return the array of patients
+    // }
+
 }
 
 

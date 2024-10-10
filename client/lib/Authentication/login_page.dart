@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:provider/provider.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import '../App/my_home_page.dart';
-import '../App/app.dart';
+//import '../App/app.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/login'),
+        Uri.parse('http://10.0.2.2:8080/user/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -42,25 +42,19 @@ class _LoginPageState extends State<LoginPage> {
           'password': passwordController.text,
         }),
       );
-
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final user = responseData['user'];
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', jsonEncode(user));
-
-        final appState = Provider.of<MyAppState>(context, listen: false);
-        appState.userId = user['user_id'];
-        appState.setUsername = user['username'];
-        appState.setEmail = user['email'];
-
-        await _fetchUserProfile(appState);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
-        );
+        final responseData = response.body;
+        if (responseData == 'Login successful') {
+          // Handle successful login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
+          );
+        } else {
+          setState(() {
+            errorMessage = responseData;
+          });
+        }
       } else {
         setState(() {
           errorMessage = 'Invalid email or password';
@@ -77,22 +71,22 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _fetchUserProfile(MyAppState appState) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
-      );
+  // Future<void> _fetchUserProfile(MyAppState appState) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
+  //     );
 
-      if (response.statusCode == 200) {
-        final profileData = json.decode(response.body);
-        appState.updateProfileFromJson(profileData);
-      } else {
-        print('Failed to fetch user profile');
-      }
-    } catch (e) {
-      print('Error fetching user profile: $e');
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final profileData = json.decode(response.body);
+  //       appState.updateProfileFromJson(profileData);
+  //     } else {
+  //       print('Failed to fetch user profile');
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching user profile: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
