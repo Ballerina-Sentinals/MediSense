@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
         appState.setUsername = user['username'];
         appState.setEmail = user['email'];
 
-        await _fetchUserProfile(appState);
+        //await _fetchUserProfile(appState);
 
         Navigator.pushReplacement(
           context,
@@ -77,22 +77,22 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _fetchUserProfile(MyAppState appState) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
-      );
+  // Future<void> _fetchUserProfile(MyAppState appState) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
+  //     );
 
-      if (response.statusCode == 200) {
-        final profileData = json.decode(response.body);
-        appState.updateProfileFromJson(profileData);
-      } else {
-        print('Failed to fetch user profile');
-      }
-    } catch (e) {
-      print('Error fetching user profile: $e');
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final profileData = json.decode(response.body);
+  //       appState.updateProfileFromJson(profileData);
+  //     } else {
+  //       print('Failed to fetch user profile');
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching user profile: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

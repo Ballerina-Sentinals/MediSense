@@ -1,13 +1,11 @@
-
 import ballerina/http;
-import ballerinax/mysql;
 import ballerina/sql;
-
+import ballerinax/mysql;
 
 // MySQL Database configuration
-configurable string dbUser = "bill";
-configurable string dbPassword = "passpass";
-configurable string dbHost = "localhost";
+configurable string dbUser = "root";
+configurable string dbPassword = "2003";
+configurable string dbHost = "10.0.2.2";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
 
@@ -15,7 +13,7 @@ configurable string dbName = "Ballerina";
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
 // Define HTTP listener
-listener http:Listener loginListener = new(8080);
+listener http:Listener loginListener = new (8080);
 
 // Define service
 service /user on loginListener {
@@ -29,7 +27,7 @@ service /user on loginListener {
         sql:ParameterizedQuery query = `SELECT password FROM user WHERE username = ${username}`;
 
         // Execute the query
-        stream<record {| string password; |}, sql:Error?> resultStream = dbClient->query(query);
+        stream<record {|string password;|}, sql:Error?> resultStream = dbClient->query(query);
         record {|record {|string password;|} value;|}|sql:Error? result = resultStream.next();
 
         if result is sql:Error {
