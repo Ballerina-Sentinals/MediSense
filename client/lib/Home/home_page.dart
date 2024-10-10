@@ -57,13 +57,6 @@ class _HomePageGeneratorState extends State<HomePageGenerator> {
                       children: [
                         Text("test text"),
                         const SizedBox(width: 16.0),
-                        Text(
-                          'achieved of ${appState.recCal} kCal Goal',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.black54,
-                          ),
-                        ),
                       ],
                     ),
                   ),
