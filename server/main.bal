@@ -11,6 +11,17 @@ configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
 
+
+type Patient record {
+    int id;
+    string name;
+    string dob;
+    string nic;
+    int? doctor_id;
+    int? caretaker_id;
+};
+
+
 // Initialize MySQL client
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
@@ -46,4 +57,29 @@ service /user on loginListener {
             }
         }
     }
+
+
+    resource function  get getAllPatients() returns sql:Error|Patient[] {
+        string query = "SELECT id, name, dob, nic, doctor_id, caretaker_id FROM patients";
+    
+    // Execute the query and fetch the results
+        stream<Patient, sql:Error?> resultStream = dbClient->query(query);
+
+    // Initialize an empty array to hold the patients
+        Patient[] patients = [];
+    
+    // Iterate over the result stream and populate the array
+        error? e = resultStream.forEach(function(Patient patient) {
+            patients.push(patient);
+        });
+
+        if e is sql:Error {
+            return e; // Return error if any
+        }
+
+        return patients; // Return the array of patients
+    }
+
+
+
 }
