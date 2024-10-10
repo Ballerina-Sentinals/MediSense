@@ -42,11 +42,11 @@ service /user on loginListener {
     }
 
     // Extract the username and password from the payload
-    string username = (check payload.username).toString();
+    string email = (check payload.email).toString();
     string password = (check payload.password).toString();
 
     // Prepare the query to fetch the stored password for the given username
-    sql:ParameterizedQuery query = `SELECT password FROM user WHERE username = ${username}`;
+    sql:ParameterizedQuery query = `SELECT password FROM user WHERE email = ${email}`;
 
     // Execute the query and fetch the result
     string|error? resultStream = dbClient->queryRow(query);
@@ -59,7 +59,7 @@ service /user on loginListener {
         return resultStream;
     } else if resultStream is () {
         // Handle case where no user is found
-        return error("Username not found");
+        return error("email not found");
     }
 
     // Extract the stored password
@@ -71,7 +71,7 @@ service /user on loginListener {
     }
 
     // Prepare the query to fetch user details after successful login
-    sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE username = ${username}`;
+    sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE email = ${email}`;
 
     // Execute the query to fetch user details
     int|error? resultStream1 = dbClient->queryRow(query1);
