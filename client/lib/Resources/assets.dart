@@ -589,195 +589,43 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 }
 
-class CustomExpandingWidget extends StatefulWidget {
-  final String listTitle;
-  final List<String> suggestions;
-  final ValueChanged<String> onChanged;
-  final String units;
-  final ValueNotifier<double> amount;
-  final Set<String> mealItems;
-
-  const CustomExpandingWidget(
-      {super.key,
-      required this.listTitle,
-      required this.suggestions,
-      required this.onChanged,
-      required this.units,
-      required this.amount,
-      required this.mealItems});
-
-  @override
-  _CustomExpandingWidget createState() => _CustomExpandingWidget();
-}
-
-class _CustomExpandingWidget extends State<CustomExpandingWidget> {
-  bool _isExpanded = false;
-  final MyAppState appState = MyAppState();
-
-  @override
-  Widget build(BuildContext context) {
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              _isExpanded = !_isExpanded;
-            });
-          },
-          children: [
-            ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade200,
-                  ),
-                  child: ListTile(
-                    title: Text(widget.listTitle),
-                    trailing: ValueListenableBuilder<double>(
-                      valueListenable: widget.amount,
-                      builder: (context, value, child) {
-                        return Text(value.toString());
-                      },
-                    ),
-                  ),
-                );
-              },
-              body: Container(
-                child: (widget.listTitle == 'Breakfast' ||
-                        widget.listTitle == 'Lunch' ||
-                        widget.listTitle == 'Dinner')
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            TextField(
-                              // obscureText: true,
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                labelText: (widget.amount.value == 0)
-                                    ? 'Enter amount'
-                                    : '${widget.amount.value} ${widget.units}',
-                                suffix: Text(widget.units),
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  widget.amount.value = double.parse(value);
-                                  appState.mealCals[appState.mealIndex] =
-                                      double.parse(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomDropDownBox(
-                                    placeholder: 'Carbohydrate',
-                                    prefixText: 'Carbohydrate    ',
-                                    suggestions: widget.suggestions,
-                                    onChanged: widget.onChanged,
-                                    mealItems: widget.mealItems,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomDropDownBox(
-                                    placeholder: 'Protein',
-                                    prefixText: 'Protein               ',
-                                    suggestions: widget.suggestions,
-                                    onChanged: widget.onChanged,
-                                    mealItems: widget.mealItems,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomDropDownBox(
-                                    placeholder: 'Vegetable',
-                                    prefixText: 'Vegetable    ',
-                                    suggestions: widget.suggestions,
-                                    onChanged: widget.onChanged,
-                                    mealItems: widget.mealItems,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomDropDownBox(
-                                    placeholder: 'Vegetable',
-                                    prefixText: 'Vegetable               ',
-                                    suggestions: widget.suggestions,
-                                    onChanged: widget.onChanged,
-                                    mealItems: widget.mealItems,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    : Column(children: [
-                        const SizedBox(height: 10),
-                        Row(children: [
-                          const SizedBox(width: 8),
-                          Expanded(
-                              child: CustomDropDownBox(
-                            placeholder: 'Choose Snack',
-                            prefixText: 'Snack',
-                            suggestions: widget.suggestions,
-                            onChanged: widget.onChanged,
-                            mealItems: widget.mealItems,
-                          )),
-                          const SizedBox(width: 8),
-                        ]),
-                        const SizedBox(height: 10),
-                      ]),
-              ),
-              // body: Container(
-              //   color: Colors.grey[100],
-              //   child: Column(
-              //     children: <Widget>[
-              //       CustomTextInputBox(
-              //           placeholder: widget.units,
-              //           prefixText: 'Total Amount',
-              //           fontSize1: 18,
-              //           onChanged: (value) {
-              //             setState(() {
-              //               widget.amount.value = double.parse(value);
-              //             });
-              //           }),
-              //       const SizedBox(
-              //         height: 5,
-              //       ),
-              //       CustomDropDownBox(
-              //         placeholder: 'choose item',
-              //         prefixText: 'Food Item          ',
-              //         suggestions: widget.suggestions,
-              //         onChanged: widget.onChanged,
-              //         mealItems: widget.mealItems,
-              //       ),
-              //       ...widget.mealItems.map(
-              //         (item) => SmallCard(
-              //           text_: item,
-              //           onPressed: () {
-              //             setState(() {
-              //               widget.mealItems.remove(item);
-              //               print(widget.mealItems);
-              //             });
-              //           },
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              isExpanded: _isExpanded,
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
+// body: Container(
+//   color: Colors.grey[100],
+//   child: Column(
+//     children: <Widget>[
+//       CustomTextInputBox(
+//           placeholder: widget.units,
+//           prefixText: 'Total Amount',
+//           fontSize1: 18,
+//           onChanged: (value) {
+//             setState(() {
+//               widget.amount.value = double.parse(value);
+//             });
+//           }),
+//       const SizedBox(
+//         height: 5,
+//       ),
+//       CustomDropDownBox(
+//         placeholder: 'choose item',
+//         prefixText: 'Food Item          ',
+//         suggestions: widget.suggestions,
+//         onChanged: widget.onChanged,
+//         mealItems: widget.mealItems,
+//       ),
+//       ...widget.mealItems.map(
+//         (item) => SmallCard(
+//           text_: item,
+//           onPressed: () {
+//             setState(() {
+//               widget.mealItems.remove(item);
+//               print(widget.mealItems);
+//             });
+//           },
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
 
 class CustomExpandingWidgetVer2 extends StatefulWidget {
   final String listTitle;
