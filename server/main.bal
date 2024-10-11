@@ -2,17 +2,25 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/mysql;
+<<<<<<< HEAD
 import ballerina/log;
 import ballerina/time;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "Pafs&SQL@123";
+=======
+
+// MySQL Database configuration
+configurable string dbUser = "root";
+configurable string dbPassword = "2003";
+>>>>>>> 3d4c3764ec3d33c0e972155cee34b27b0dcfb4f5
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
 
 
+<<<<<<< HEAD
 // Initialize MySQL client
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
@@ -24,6 +32,33 @@ listener http:Listener reminderListener = new(8080);
 // Define service
 service /user on loginListener {
 
+=======
+
+type User record {|
+    int user_id;
+    
+|};
+
+type Patient record {
+    int id;
+    string name;
+    string dob;
+    string nic;
+    int? doctor_id;
+    int? caretaker_id;
+};
+
+// Initialize MySQL client
+mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
+
+// Define HTTP listener
+listener http:Listener loginListener = new (8080);
+
+// Define service
+service /user on loginListener {
+
+
+>>>>>>> 3d4c3764ec3d33c0e972155cee34b27b0dcfb4f5
    resource function post login(http:Request req) returns sql:Error|error|int|error? {
     // Fetch and validate the JSON payload
     json|error payload = req.getJsonPayload();
@@ -70,12 +105,21 @@ service /user on loginListener {
     // Initialize an array to store the result
     
     
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3d4c3764ec3d33c0e972155cee34b27b0dcfb4f5
     // Return the array of users
     return resultStream1;
 }
 
 
     
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3d4c3764ec3d33c0e972155cee34b27b0dcfb4f5
     resource function get getAllPatients(http:Request req) returns Patient[]|sql:Error|error {
     // Fetch and validate the JSON payload
         json|error payload = req.getJsonPayload();
@@ -139,6 +183,7 @@ service /user on loginListener {
 
 }
 
+<<<<<<< HEAD
 service /reminders on reminderListener {
     resource function post createReminder(Reminder newReminder) returns ReminderCreated |error? {
         // Extract the reminder details from the request payload
@@ -208,6 +253,8 @@ service /reminders on reminderListener {
 
 
 
+=======
+>>>>>>> 3d4c3764ec3d33c0e972155cee34b27b0dcfb4f5
 
 
 

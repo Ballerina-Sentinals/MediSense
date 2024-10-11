@@ -1,0 +1,21 @@
+-->UserLogin
+-->Dashboard -> Doctors, Care takers, Patients
+-->Identifier AI
+-->Reminder with pills
+-->Chatbot
+-->#optional -->Patients and Doctors massages
+-->Notifications
+-->profile
+
+
+
+
+
+users - username, password, User_ID
+Patients - ID, name,DOB, address ,NIC, Guadian_ID, Allergies and deciese,contact_number
+Doctors - ID,name,contact_number,Specialization
+User_Medicine - User_ID,pills, prescriptions,Doctor_ID
+Reminders  - User_ID, time , madicines
+Emergency_info - User_ID, Guardian_name, contact_number
+All_Medicine
+
