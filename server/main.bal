@@ -23,7 +23,6 @@ listener http:Listener reminderListener = new(8080);
 // Define service
 service /user on loginListener {
 
-
    resource function post login(http:Request req) returns sql:Error|error|int|error? {
     // Fetch and validate the JSON payload
     json|error payload = req.getJsonPayload();
@@ -144,37 +143,35 @@ service /reminders on reminderListener {
         // Extract the reminder details from the request payload
         Reminder reminder = {
             ...newReminder
-        }
+        };
 
         var userId = reminder.user_id;
         var date = reminder.date;
         var time = reminder.time;
-        Dosage[] dosages = reminder.dosages;
-
-        
-        // Convert Dosage[] to a string of med_ids
-        string medIds = "";
-        foreach var dosage in dosages {
-            medIds += dosage.med_id.toString() + ",";
-        }
-        // Remove the trailing comma
-        if (medIds.length() > 0) {
-            medIds = medIds.substring(0, medIds.length() - 1);
-        }
+        var recordId = reminder.record_id;
 
         // Prepare the query to insert the reminder
         sql:ParameterizedQuery query = `INSERT INTO Reminders (user_id, date, time, med_ids)
-                                        VALUES (${userId}, ${date}, ${time}, ${medIds})`;
+                                        VALUES (${userId}, ${date}, ${time}, ${recordId})`;
 
-        // Execute the query
-        var result = check dbClient->execute(query);
+        // Execute the query to insert the reminder
+        int|error? resultStream1 = dbClient->queryRow(query);
 
+        if resultStream1 is sql:Error {
+        // Handle SQL errors if any
+        return resultStream1;
+        }
         // Schedule the reminder based on the time
         _ = start scheduleReminder(userId, date, time, medIds);
 
-        // Respond to the caller
-        check caller->respond("Reminder created and scheduled");
+        // Return the created reminder
+        return{
+            body: reminder
+        };
+        
     }
+
+    
 }
 
 
