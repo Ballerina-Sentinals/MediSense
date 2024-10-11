@@ -2,35 +2,23 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/mysql;
+import ballerina/log;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
-configurable string dbPassword = "2003";
+configurable string dbPassword = "Pafs&SQL@123";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
 
 
-
-type User record {|
-    int user_id;
-    
-|};
-
-type Patient record {
-    int id;
-    string name;
-    string dob;
-    string nic;
-    int? doctor_id;
-    int? caretaker_id;
-};
-
 // Initialize MySQL client
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
-// Define HTTP listener
+// Define HTTP listeners
 listener http:Listener loginListener = new (8080);
+
+listener http:Listener reminderListener = new(8080);
 
 // Define service
 service /user on loginListener {
@@ -82,15 +70,12 @@ service /user on loginListener {
     // Initialize an array to store the result
     
     
-
-
     // Return the array of users
     return resultStream1;
 }
 
 
     
-
     resource function get getAllPatients(http:Request req) returns Patient[]|sql:Error|error {
     // Fetch and validate the JSON payload
         json|error payload = req.getJsonPayload();
@@ -153,6 +138,47 @@ service /user on loginListener {
     // }
 
 }
+
+service /reminders on reminderListener {
+    resource function post createReminder(Reminder newReminder) returns ReminderCreated |error? {
+        // Extract the reminder details from the request payload
+        Reminder reminder = {
+            ...newReminder
+        }
+
+        var userId = reminder.user_id;
+        var date = reminder.date;
+        var time = reminder.time;
+        Dosage[] dosages = reminder.dosages;
+
+        
+        // Convert Dosage[] to a string of med_ids
+        string medIds = "";
+        foreach var dosage in dosages {
+            medIds += dosage.med_id.toString() + ",";
+        }
+        // Remove the trailing comma
+        if (medIds.length() > 0) {
+            medIds = medIds.substring(0, medIds.length() - 1);
+        }
+
+        // Prepare the query to insert the reminder
+        sql:ParameterizedQuery query = `INSERT INTO Reminders (user_id, date, time, med_ids)
+                                        VALUES (${userId}, ${date}, ${time}, ${medIds})`;
+
+        // Execute the query
+        var result = check dbClient->execute(query);
+
+        // Schedule the reminder based on the time
+        _ = start scheduleReminder(userId, date, time, medIds);
+
+        // Respond to the caller
+        check caller->respond("Reminder created and scheduled");
+    }
+}
+
+
+
 
 
 
