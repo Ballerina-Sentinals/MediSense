@@ -104,16 +104,6 @@ CREATE TABLE `user` (
 CREATE TABLE Reminders (
     reminder_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    remider_date DATE NOT NULL,
-    reminder_time TIME NOT NULL,
-    record_id VARCHAR(255),
-    reminder_status ENUM('Done', 'Missed', 'Pending') NOT NULL DEFAULT 'Pending',
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
-CREATE TABLE Reminders (
-    reminder_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
     reminder_date DATE NOT NULL,
     reminder_time TIME NOT NULL,
     record_id INT NOT NULL,

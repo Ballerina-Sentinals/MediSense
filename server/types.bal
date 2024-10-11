@@ -19,12 +19,11 @@ type Reminder record {|
     string record_id;
     string date;
     string time;
-    
 |};
 
-type Dosage record {|
-    int med_id;
-    int dosage;
+type Record record {|
+    int record_id;
+    string record_data;
 |};
 
 type ReminderCreated record {|
