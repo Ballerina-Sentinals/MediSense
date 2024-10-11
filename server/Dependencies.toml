@@ -61,7 +61,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.12.0"
+version = "2.12.1"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
@@ -267,6 +267,9 @@ dependencies = [
 	{org = "ballerina", name = "lang.object"},
 	{org = "ballerina", name = "time"}
 ]
+modules = [
+	{org = "ballerina", packageName = "sql", moduleName = "sql"}
+]
 
 [[package]]
 org = "ballerina"
@@ -335,18 +338,29 @@ modules = [
 ]
 
 [[package]]
+org = "ballerinax"
+name = "mysql.driver"
+version = "1.7.0"
+modules = [
+	{org = "ballerinax", packageName = "mysql.driver", moduleName = "mysql.driver"}
+]
+
+[[package]]
 org = "sansi"
 name = "server"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "sql"},
 	{org = "ballerina", name = "test"},
 	{org = "ballerinai", name = "observe"},
-	{org = "ballerinax", name = "mysql"}
+	{org = "ballerinax", name = "mysql"},
+	{org = "ballerinax", name = "mysql.driver"}
 ]
 modules = [
 	{org = "sansi", packageName = "server", moduleName = "server"},
-	{org = "sansi", packageName = "server", moduleName = "server.medisense_services"}
+	{org = "sansi", packageName = "server", moduleName = "server.medisense_services"},
+	{org = "sansi", packageName = "server", moduleName = "server.read_user"}
 ]
 
