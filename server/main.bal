@@ -35,6 +35,20 @@ type Doctor record{
 
 };
 
+type care_taker record{
+    int id;
+    string name;
+    string dob;
+    string nic;
+};
+
+type user_signup record {|
+    string username;
+    string password;
+    string email;
+    string role;
+|};
+
 // Initialize MySQL client
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 
@@ -119,6 +133,26 @@ service /user on loginListener {
 
         return resultStream1; // Return the array of patients
         
+    }
+
+
+    resource function get  get_care_taker_info/[int user_id](http:Request req) returns care_taker|sql:Error{
+
+    // Prepare the query
+        sql:ParameterizedQuery query = `SELECT id, name, dob, nic FROM caretakers WHERE id = ${user_id}`;
+
+    // Execute the query and fetch the results
+        care_taker|sql:Error resultStream1 = dbClient->queryRow(query);
+
+        return resultStream1; // Return the array of patients
+        
+    }
+
+
+    resource function post  signup(user_signup user ,http:Request req)returns sql:ExecutionResult|sql:Error {
+        sql:ParameterizedQuery query  = `INSERT INTO user (username,password,email,role) values (${user.username},${user.password},${user.email},${user.role})`;
+        sql:ExecutionResult|sql:Error result = dbClient->execute(query);
+        return result;       
     }
 
 }
