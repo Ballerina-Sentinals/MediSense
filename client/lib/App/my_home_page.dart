@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 4) {
+          if (index == 2) {
             _handleLogout();
           } else {
             setState(() {
@@ -82,14 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Plan Diet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Calorie Diary',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

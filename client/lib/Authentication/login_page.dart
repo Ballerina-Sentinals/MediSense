@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 //import 'package:provider/provider.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../App/my_home_page.dart';
 //import '../App/app.dart';
 import 'signup_page.dart';
@@ -43,8 +43,13 @@ class _LoginPageState extends State<LoginPage> {
         }),
       );
       if (response.statusCode == 200) {
-        final responseData = response.body;
-        if (responseData == 'Login successful') {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData['status'] == 'Login successful') {
+          print(responseData);
+          // Store login information
+          await storeLoginInfo(responseData['user']);
+
           // Handle successful login
           Navigator.pushReplacement(
             context,
@@ -52,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else {
           setState(() {
-            errorMessage = responseData;
+            errorMessage = responseData['message'];
           });
         }
       } else {
@@ -63,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       setState(() {
         errorMessage = 'An error occurred. Please try again.';
+        print(e);
       });
     } finally {
       setState(() {
@@ -70,6 +76,62 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
+  Future<void> storeLoginInfo(Map<String, dynamic> user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', user['id'].toString());
+    //await prefs.setString('email', user['email']);
+  }
+
+  // Future<void> login() async {
+  //   if (!_formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   setState(() {
+  //     isLoading = true;
+  //     errorMessage = '';
+  //   });
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('http://10.0.2.2:8080/user/login'),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //       },
+  //       body: jsonEncode(<String, String>{
+  //         'email': emailController.text,
+  //         'password': passwordController.text,
+  //       }),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final responseData = response.body;
+  //       if (responseData == 'Login successful') {
+  //         // Handle successful login
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const MyHomePage()),
+  //         );
+  //       } else {
+  //         setState(() {
+  //           errorMessage = responseData;
+  //         });
+  //       }
+  //     } else {
+  //       setState(() {
+  //         errorMessage = 'Invalid email or password';
+  //       });
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       errorMessage = 'An error occurred. Please try again.';
+  //     });
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   // Future<void> _fetchUserProfile(MyAppState appState) async {
   //   try {
