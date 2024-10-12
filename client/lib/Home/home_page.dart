@@ -20,7 +20,7 @@ class _HomePageGeneratorState extends State<HomePageGenerator> {
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Image.asset(
-          'assets/bg.png',
+          'lib/Resources/images/001_blueCapsules.jpg',
           fit: BoxFit.cover,
           // height: 120,
         ),

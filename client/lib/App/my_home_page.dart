@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import "../Home/home_page.dart";
@@ -50,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
         surfaceTintColor: Colors.white,
 
         title: Image.asset(
-          'assets/logo.png',
+          'lib/Resources/images/logo.png',
           fit: BoxFit.contain,
           height: 120,
         ),
