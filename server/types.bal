@@ -16,13 +16,12 @@ type Patient record {
 
 type Reminder record {|
     int user_id;
-    string record_id;
+    Record recordInfo;
     string date;
     string time;
 |};
 
 type Record record {|
-    int record_id;
     string record_data;
 |};
 
