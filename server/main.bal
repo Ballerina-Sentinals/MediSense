@@ -190,7 +190,6 @@ service /user on loginListener {
     //     // Return the array of users
     //     return resultStream1;
     // }
-
     resource function get get_patient_info/[int user_id](http:Request req) returns Patient|sql:Error|error {
 
         // Prepare the query
