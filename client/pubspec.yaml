@@ -35,6 +35,7 @@ dependencies:
   provider: ^6.1.2
   table_calendar: ^3.1.2
   shared_preferences: ^2.1.0
+  material_design_icons_flutter: ^5.0.5955
 
   intl: any
 dev_dependencies:
@@ -61,6 +62,13 @@ flutter:
   assets:
     - lib/Resources/images/001_blueCapsules.jpg
     - lib/Resources/images/logo.png
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat/static/Montserrat-Regular.ttf
+        - asset: fonts/Montserrat/static/Montserrat-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

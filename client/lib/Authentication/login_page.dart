@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
           'MediSense',
           style: TextStyle(
             color: Color.fromARGB(255, 36, 114, 113),
-            fontFamily: 'Roboto', // Change to your desired font family
+            fontFamily: 'Montserrat', // Change to your desired font family
             fontSize: 24, // Change to your desired font size
             fontWeight: FontWeight.bold, // Change to your desired font weight
           ),
