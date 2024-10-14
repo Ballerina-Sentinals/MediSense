@@ -45,4 +45,13 @@ service /user on loginListener {
         return user:patient_reg(new_p,dbClient1);
         
     }
+
+    resource function post doctor_registation(Doctor new_doc) returns http:Response|sql:Error {
+        return user:doctor_reg(new_doc,dbClient1);
+    }
+
+    resource function post pharmacy_registation(Pharmacy new_phar) returns http:Response|sql:Error {
+        return user:pharmacy_reg(new_phar,dbClient1);
+        
+    }
 }
