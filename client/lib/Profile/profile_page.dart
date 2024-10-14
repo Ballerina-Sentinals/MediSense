@@ -82,14 +82,14 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
       // appBar: AppBar(title: const Text('My Profile')),
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Image.asset(
-          'assets/bg.png',
+          'lib/Resources/images/001_blueCapsules.jpg',
           fit: BoxFit.cover,
           // height: 120,
         ),
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
-            color: Colors.white.withOpacity(0.8),
+            color: const Color.fromARGB(255, 182, 221, 241).withOpacity(0.6),
           ),
         ),
         Form(
@@ -107,16 +107,9 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
                 _dateOfBirth(),
                 _height(),
                 _weight(),
-                _dietaryPreference(),
                 _allergies(),
-                _ethnicity(),
-                _activityLevel(),
-                _currentCalorieIntake(),
-                _weightGoal(),
-                _targetWeight(),
-                _weightChangeRate(),
-                const SizedBox(height: 20),
-                _deleteUserButton(),
+                const SizedBox(height: 40),
+                Center(child: _isEditing ? null : _deleteUserButton()),
               ],
             ),
           ),
@@ -238,27 +231,6 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
     );
   }
 
-  Widget _dietaryPreference() {
-    var appState = context.watch<MyAppState>();
-    return DropdownButtonFormField<String>(
-      value: appState.dietaryPreference.isNotEmpty
-          ? appState.dietaryPreference
-          : null,
-      items: const [
-        DropdownMenuItem(value: 'vegetarian', child: Text('Vegetarian')),
-        DropdownMenuItem(
-            value: 'non_vegetarian', child: Text('Non Vegetarian')),
-        DropdownMenuItem(value: 'vegan', child: Text('Vegan')),
-      ],
-      onChanged:
-          _isEditing ? (value) => appState.dietaryPreference = value! : null,
-      decoration: InputDecoration(
-        labelText: 'Dietary Preference',
-        enabled: _isEditing,
-      ),
-    );
-  }
-
   Widget _allergies() {
     var appState = context.watch<MyAppState>();
     return TextFormField(
@@ -266,106 +238,6 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
       initialValue: appState.allergies,
       decoration: const InputDecoration(labelText: 'Allergies'),
       onChanged: (value) => appState.allergies = value,
-    );
-  }
-
-  Widget _ethnicity() {
-    var appState = context.watch<MyAppState>();
-    return DropdownButtonFormField<String>(
-      value: appState.ethnicity.isNotEmpty ? appState.ethnicity : null,
-      items: const [
-        DropdownMenuItem(value: 'sri_lankan', child: Text('Sri Lankan')),
-        DropdownMenuItem(value: 'south_asian', child: Text('South Asian')),
-        DropdownMenuItem(value: 'asian', child: Text('Asian')),
-        DropdownMenuItem(value: 'non_asian', child: Text('Non Asian')),
-      ],
-      onChanged: _isEditing ? (value) => appState.ethnicity = value! : null,
-      decoration: InputDecoration(
-        labelText: 'Ethnicity',
-        enabled: _isEditing,
-      ),
-    );
-  }
-
-  Widget _activityLevel() {
-    var appState = context.watch<MyAppState>();
-    return DropdownButtonFormField<String>(
-      value: appState.activityLevel.isNotEmpty ? appState.activityLevel : null,
-      items: const [
-        DropdownMenuItem(value: 'light', child: Text('Light')),
-        DropdownMenuItem(value: 'moderate', child: Text('Moderate')),
-        DropdownMenuItem(value: 'active', child: Text('Active')),
-        DropdownMenuItem(value: 'very_active', child: Text('Very Active')),
-      ],
-      onChanged: _isEditing ? (value) => appState.activityLevel = value! : null,
-      decoration: InputDecoration(
-        labelText: 'Activity Level',
-        enabled: _isEditing,
-      ),
-    );
-  }
-
-  Widget _currentCalorieIntake() {
-    var appState = context.watch<MyAppState>();
-    return TextFormField(
-      enabled: _isEditing,
-      initialValue: appState.currentCaloriesPerDay.toString(),
-      decoration:
-          const InputDecoration(labelText: 'Current Calorie Intake (per day)'),
-      keyboardType: TextInputType.number,
-      onChanged: (value) => appState.currentCaloriesPerDay =
-          int.tryParse(value) ?? appState.currentCaloriesPerDay,
-    );
-  }
-
-  Widget _weightGoal() {
-    var appState = context.watch<MyAppState>();
-    return DropdownButtonFormField<String>(
-      value: appState.weightGoal.isNotEmpty ? appState.weightGoal : null,
-      items: const [
-        DropdownMenuItem(value: 'maintain', child: Text('Maintain')),
-        DropdownMenuItem(value: 'lose', child: Text('Lose')),
-        DropdownMenuItem(value: 'gain', child: Text('Gain')),
-      ],
-      onChanged: _isEditing ? (value) => appState.weightGoal = value! : null,
-      decoration: InputDecoration(
-        labelText: 'Weight Goal',
-        enabled: _isEditing,
-      ),
-    );
-  }
-
-  Widget _targetWeight() {
-    var appState = context.watch<MyAppState>();
-    return TextFormField(
-      enabled: _isEditing,
-      initialValue: appState.targetWeightKg.toString(),
-      decoration: const InputDecoration(labelText: 'Target Weight (kg)'),
-      keyboardType: TextInputType.number,
-      onChanged: (value) => appState.targetWeightKg =
-          double.tryParse(value) ?? appState.targetWeightKg,
-    );
-  }
-
-  Widget _weightChangeRate() {
-    var appState = context.watch<MyAppState>();
-    return DropdownButtonFormField<String>(
-      value: appState.weightChangeRate.isNotEmpty
-          ? appState.weightChangeRate
-          : null,
-      items: const [
-        DropdownMenuItem(value: '0', child: Text('Maintain')),
-        DropdownMenuItem(value: '200', child: Text('Slow')),
-        DropdownMenuItem(value: '400', child: Text('Moderate')),
-        DropdownMenuItem(value: '600', child: Text('Fast')),
-        DropdownMenuItem(value: '800', child: Text('Very Fast')),
-      ],
-      onChanged:
-          _isEditing ? (value) => appState.weightChangeRate = value! : null,
-      decoration: InputDecoration(
-        labelText: 'Weight Change Rate (calories/day)',
-        enabled: _isEditing,
-      ),
     );
   }
 

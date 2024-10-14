@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../App/app.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -558,11 +557,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
       },
       calendarStyle: CalendarStyle(
         selectedDecoration: BoxDecoration(
-          color: Colors.green[600],
+          color: const Color.fromARGB(255, 67, 135, 160),
           shape: BoxShape.circle,
         ),
         todayDecoration: BoxDecoration(
-          color: Colors.green[200],
+          color: const Color.fromARGB(255, 138, 166, 194),
           shape: BoxShape.circle,
         ),
         defaultDecoration: const BoxDecoration(
@@ -772,7 +771,7 @@ class _CustomExpandingWidgetVer3 extends State<CustomExpandingWidgetVer3> {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.green.shade200,
+                      color: const Color.fromARGB(255, 154, 221, 215),
                     ),
                     child: ListTile(
                       title: Text(widget.listTitle),

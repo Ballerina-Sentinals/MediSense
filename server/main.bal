@@ -8,12 +8,17 @@ configurable string dbUser = "root";
 configurable string dbPassword = "password";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
+
 configurable string dbName = "Ballerina";
 
 mysql:Client dbClient1 = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 listener http:Listener loginListener = new (8080);
 
 service /user on loginListener {
+    resource function post login(http:Request req) returns http:Response|error {
+        // Fetch and validate the JSON payload
+        json|error payload = req.getJsonPayload();
+
 
    resource function post login_(http:Request req)  returns http:Response|error
    {
@@ -40,3 +45,4 @@ service /user on loginListener {
         
     }
 }
+
