@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'NutriMithu',
+        title: 'MediSense',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 125, 167, 255)),
@@ -44,14 +44,7 @@ class MyAppState extends ChangeNotifier {
   DateTime dateOfBirth = DateTime.now();
   double height = 0;
   double weight = 0;
-  String dietaryPreference = '';
   String allergies = '';
-  String ethnicity = '';
-  String activityLevel = '';
-  int currentCaloriesPerDay = 0;
-  String weightGoal = '';
-  double targetWeightKg = 0;
-  String weightChangeRate = '0';
 
   MyAppState() {
     _loadUserData();
@@ -95,20 +88,6 @@ class MyAppState extends ChangeNotifier {
     weight = json['weight_kg'] != null
         ? double.parse(json['weight_kg'].toString())
         : weight;
-    dietaryPreference = json['dietary_preference'] ?? dietaryPreference;
-    allergies = json['allergies'] ?? allergies;
-    ethnicity = json['ethnicity'] ?? ethnicity;
-    activityLevel = json['activity_level'] ?? activityLevel;
-    currentCaloriesPerDay = json['current_calories_per_day'] != null
-        ? int.parse(json['current_calories_per_day'].toString())
-        : currentCaloriesPerDay;
-    weightGoal = json['weight_goal'] ?? weightGoal;
-    targetWeightKg = json['target_weight_kg'] != null
-        ? double.parse(json['target_weight_kg'].toString())
-        : targetWeightKg;
-    weightChangeRate =
-        json['weight_change_rate']?.toString() ?? weightChangeRate;
-    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {
@@ -121,14 +100,6 @@ class MyAppState extends ChangeNotifier {
       'date_of_birth': dateOfBirth.toIso8601String(),
       'height_cm': height,
       'weight_kg': weight,
-      'dietary_preference': dietaryPreference,
-      'allergies': allergies,
-      'ethnicity': ethnicity,
-      'activity_level': activityLevel,
-      'current_calories_per_day': currentCaloriesPerDay,
-      'weight_goal': weightGoal,
-      'target_weight_kg': targetWeightKg,
-      'weight_change_rate': weightChangeRate,
     };
   }
 
@@ -168,43 +139,8 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  set setDietaryPreference(String value) {
-    dietaryPreference = value;
-    notifyListeners();
-  }
-
   set setAllergies(String value) {
     allergies = value;
-    notifyListeners();
-  }
-
-  set setEthnicity(String value) {
-    ethnicity = value;
-    notifyListeners();
-  }
-
-  set setActivityLevel(String value) {
-    activityLevel = value;
-    notifyListeners();
-  }
-
-  set setCurrentCaloriesPerDay(int value) {
-    currentCaloriesPerDay = value;
-    notifyListeners();
-  }
-
-  set setWeightGoal(String value) {
-    weightGoal = value;
-    notifyListeners();
-  }
-
-  set setTargetWeightKg(double value) {
-    targetWeightKg = value;
-    notifyListeners();
-  }
-
-  set setWeightChangeRate(String value) {
-    weightChangeRate = value;
     notifyListeners();
   }
 
@@ -218,14 +154,6 @@ class MyAppState extends ChangeNotifier {
     dateOfBirth = DateTime.now();
     height = 0;
     weight = 0;
-    dietaryPreference = '';
-    allergies = '';
-    ethnicity = '';
-    activityLevel = '';
-    currentCaloriesPerDay = 0;
-    weightGoal = '';
-    targetWeightKg = 0;
-    weightChangeRate = '0';
     // Reset other variables as needed
     notifyListeners();
   }
