@@ -8,7 +8,7 @@ configurable string dbUser = "root";
 configurable string dbPassword = "2003";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
-configurable string dbName = "ballerina";
+configurable string dbName = "medisense";
 
 type User record {|
     int user_id;
@@ -117,10 +117,15 @@ service /user on loginListener {
 
         // Prepare the query to fetch user details after successful login
         sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE email = ${email}`;
-
+        sql:ParameterizedQuery query2 = `SELECT user.role FROM user WHERE email = ${email}`;
         // Execute the query to fetch user details
         int|error? resultStream1 = dbClient->queryRow(query1);
+        string|error? resultStream2 = dbClient->queryRow(query2);
 
+        if resultStream2 is sql:Error {
+            io:println("Error occurred while fetching user details: ", resultStream2.toString());
+            return createErrorResponse(500, "Internal server error");
+        }
         if resultStream1 is sql:Error {
             io:println("Error occurred while fetching user details: ", resultStream1.toString());
             return createErrorResponse(500, "Internal server error");
@@ -133,7 +138,7 @@ service /user on loginListener {
         // Create a successful response
         http:Response response = new;
         response.statusCode = 200;
-        response.setJsonPayload({status: "Login successful", user: {userId: check resultStream1, email: email}});
+        response.setJsonPayload({status: "Login successful", user: {userId: check resultStream1, email: email, role: check resultStream2}});
         io:println(response.statusCode);
         io:println(response.getJsonPayload());
         return response;

@@ -136,7 +136,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           'lib/Resources/images/logo.png',
                           fit: BoxFit.cover,
                           height: 100,
-                          width: 69,
+                          width: 78,
                         ),
                       ),
                     ),
