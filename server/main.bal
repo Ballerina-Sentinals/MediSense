@@ -148,7 +148,7 @@ service /user on loginListener {
 
    resource function get get_doctor_info/[int user_id](http:Request req) returns http:Response|Doctor|error? {
     // Prepare the query
-        sql:ParameterizedQuery query = `SELECT id, name, dob, nic, doctor_lisence FROM doctors WHERE id = ${user_id}`;
+        sql:ParameterizedQuery query = `SELECT * FROM doctors WHERE id = ${user_id}`;
 
     // Execute the query and fetch the results
         Doctor|error? resultStream1 = dbClient->queryRow(query);
@@ -200,7 +200,7 @@ service /user on loginListener {
     // Return a successful response with caretaker info
         response.statusCode = 200;
         return resultStream1;
-}
+    }
 
 
 
