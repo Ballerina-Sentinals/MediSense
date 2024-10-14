@@ -4,31 +4,44 @@ import ballerina/sql;
 import ballerinax/mysql;
 
 public type Patient record {
-    int id;
+    int patient_id;
+    int user_id;
     string name;
     string dob;
     string nic;
-    int? doctor_id;
-    int? caretaker_id;
+    int doctor_id ;
+    int emergency_contact ;
+    decimal weight ;
+    decimal height ;
+    string allergies ;
 };
 
  public type Doctor record {
-    int id;
+    int doctor_id;
+    int user_id;
     string name;
-    string dob;
-    string? nic;
-    string? doctor_lisence;
-
-};
-
-public type care_taker record {
-    int id;
-    string name;
-    string dob;
     string nic;
+    string doctor_license ;
+    string description;
+};
+
+public type Pharmacy record {
+    int pharm_id ;
+    int user_id ;
+    string name ;
+    string district ;
+    string town ;
+    string street ;
+    string con_number ;
+    decimal rating ;
 };
 
 
+# Description.
+#
+# + statusCode - parameter description  
+# + message - parameter description
+# + return - return value description
 public function createErrorResponse(int statusCode, string message) returns http:Response {
     http:Response response = new;
     response.statusCode = statusCode;
@@ -37,9 +50,9 @@ public function createErrorResponse(int statusCode, string message) returns http
 }
 
 
-public function  patient_info(http:Request req,int user_id,mysql:Client dbClient) returns Patient|http:Response|error? {
+public function  patient_info(http:Request req,int user_id,mysql:Client dbClient) returns Patient|error?|http:Response {
         // Prepare the query
-    sql:ParameterizedQuery query = `SELECT id, name, dob, nic, doctor_id, caretaker_id FROM patients WHERE id = ${user_id}`;
+    sql:ParameterizedQuery query = `SELECT * FROM patients WHERE id = ${user_id}`;
 
     Patient|error? resultStream = dbClient->queryRow(query);
 
@@ -64,7 +77,7 @@ public function  patient_info(http:Request req,int user_id,mysql:Client dbClient
     return resultStream;
 }
 
-public function  doctor_info(int user_id,http:Request req,mysql:Client dbClient) returns http:Response|Doctor|error? {
+public function  doctor_info(http:Request req,int user_id,mysql:Client dbClient) returns http:Response|Doctor|error? {
         // Prepare the query
     sql:ParameterizedQuery query = `SELECT * FROM doctors WHERE id = ${user_id}`;
 
@@ -92,12 +105,12 @@ public function  doctor_info(int user_id,http:Request req,mysql:Client dbClient)
     return resultStream1;
 }
 
-public function  care_taker_info(int user_id,http:Request req,mysql:Client dbClient) returns http:Response|care_taker|error? {
+public function  pharmacy_info(http:Request req,int user_id,mysql:Client dbClient) returns http:Response|Pharmacy|error? {
         // Prepare the query
-    sql:ParameterizedQuery query = `SELECT id, name, dob, nic FROM caretakers WHERE id = ${user_id}`;
+    sql:ParameterizedQuery query = `SELECT * FROM pharmacies WHERE id = ${user_id}`;
 
         // Execute the query and fetch the results
-    care_taker|error? resultStream1 = dbClient->queryRow(query);
+    Pharmacy|error? resultStream1 = dbClient->queryRow(query);
 
         // Create the response
     http:Response response = new;
@@ -112,13 +125,37 @@ public function  care_taker_info(int user_id,http:Request req,mysql:Client dbCli
         return createErrorResponse(500, "An error occurred");
     } else if resultStream1 is () {
             // Handle case where no caretaker is found
-        return createErrorResponse(404, "Caretaker not found");
+        return createErrorResponse(404, "Pharmacy not found");
     }
 
         // Return a successful response with caretaker info
     response.statusCode = 200;
     return resultStream1;
 }
+
+
+public function patient_reg(http:Request req,Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
+        // Prepare the query
+    sql:ParameterizedQuery query = `INSERT INTO patients (user_id, name, dob, nic, doctor_id, emergency_contact, weight, height, allergies)
+VALUES (${new_patient.patient_id}, ${new_patient.name}, ${new_patient.dob}, ${new_patient.nic}, ${new_patient.doctor_id}, ${new_patient.emergency_contact},${new_patient.weight},${new_patient.height},${new_patient.allergies});`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
+    http:Response response = new;
+
+    if resultStream1 is sql:Error {
+            // Handle SQL error
+        io:println("Error occurred while executing the query: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+        // Return a successful response with caretaker info
+    
+    }
+    response.statusCode = 200;
+    response.setJsonPayload({status:"Registered Successfully"});
+    return response;
+}
+
+
+
 
 
 

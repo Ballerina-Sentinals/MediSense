@@ -15,8 +15,6 @@ listener http:Listener loginListener = new (8080);
 
 service /user on loginListener {
 
-
-
    resource function post login_(http:Request req)  returns http:Response|error
    {
         return login:login(req,dbClient1);
@@ -27,12 +25,18 @@ service /user on loginListener {
    }
 
 
-    resource function get patient_profile/[int user_id_](http:Request req)returns Patient|http:Response|error? {
+    resource function get patient_profile/[int user_id_](http:Request req)returns user:Patient|error?|http:Response {
         return user:patient_info(req,user_id_,dbClient1);
         
     }
+
+    resource function get  doctor_profile/[int user_id_](http:Request req)returns http:Response|user:Doctor|error? {
+        return user:doctor_info(req,user_id_,dbClient1);
+        
+    }
+
+    resource function get  pharmacy_profile/[int user_id_](http:Request req)returns http:Response|user:Pharmacy|error? {
+        return user:pharmacy_info(req,user_id_,dbClient1);
+        
+    }
 }
-
-
-
-
