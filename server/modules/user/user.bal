@@ -4,7 +4,6 @@ import ballerina/sql;
 import ballerinax/mysql;
 
 public type Patient record {
-    int patient_id;
     int user_id;
     string name;
     string dob;
@@ -17,7 +16,6 @@ public type Patient record {
 };
 
  public type Doctor record {
-    int doctor_id;
     int user_id;
     string name;
     string nic;
@@ -26,7 +24,6 @@ public type Patient record {
 };
 
 public type Pharmacy record {
-    int pharm_id ;
     int user_id ;
     string name ;
     string district ;
@@ -134,10 +131,10 @@ public function  pharmacy_info(http:Request req,int user_id,mysql:Client dbClien
 }
 
 
-public function patient_reg(http:Request req,Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
+public function patient_reg(Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
         // Prepare the query
     sql:ParameterizedQuery query = `INSERT INTO patients (user_id, name, dob, nic, doctor_id, emergency_contact, weight, height, allergies)
-VALUES (${new_patient.patient_id}, ${new_patient.name}, ${new_patient.dob}, ${new_patient.nic}, ${new_patient.doctor_id}, ${new_patient.emergency_contact},${new_patient.weight},${new_patient.height},${new_patient.allergies});`;
+VALUES (${new_patient.user_id},${new_patient.name}, ${new_patient.dob}, ${new_patient.nic}, ${new_patient.doctor_id}, ${new_patient.emergency_contact},${new_patient.weight},${new_patient.height},${new_patient.allergies});`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;

@@ -1,4 +1,4 @@
-
+import ballerina/time;
 
 public type usersignup record {|
     string username;
@@ -8,10 +8,9 @@ public type usersignup record {|
 |};
 
 public type Patient record {
-    int patient_id;
     int user_id;
     string name;
-    string dob;
+    time:Civil dob;
     string nic ;
     int doctor_id ;
     int emergency_contact ;
@@ -21,7 +20,6 @@ public type Patient record {
 };
 
  public type Doctor record {
-    int doctor_id;
     int user_id;
     string name;
     string nic;
@@ -30,7 +28,6 @@ public type Patient record {
 };
 
 public type Pharmacy record {
-    int pharm_id ;
     int user_id ;
     string name ;
     string district ;

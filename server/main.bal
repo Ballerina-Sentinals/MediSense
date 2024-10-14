@@ -2,6 +2,7 @@ import ballerina/http;
 import server.login;
 import server.user;
 import ballerinax/mysql;
+import ballerina/sql;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
@@ -37,6 +38,11 @@ service /user on loginListener {
 
     resource function get  pharmacy_profile/[int user_id_](http:Request req)returns http:Response|user:Pharmacy|error? {
         return user:pharmacy_info(req,user_id_,dbClient1);
+        
+    }
+
+    resource function post  patient_registation(Patient new_p) returns http:Response|sql:Error {
+        return user:patient_reg(new_p,dbClient1);
         
     }
 }
