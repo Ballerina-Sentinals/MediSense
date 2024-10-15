@@ -15,7 +15,7 @@ configurable string dbName = "Ballerina";
 mysql:Client dbClient1 = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 listener http:Listener loginListener = new (8080);
 
-service /user on loginListener {
+service / on loginListener {
 
    resource function post login_(http:Request req)  returns http:Response|error
    {
@@ -67,10 +67,7 @@ service /user on loginListener {
     }
     resource function post locator_doctor(locator doc_location)returns Doctor[]|error? {
         return locator:doctor_locator(doc_location,dbClient1);
-        
-    }
-
-
+    }   
     resource function post locator_pharmacy(locator phar_location)returns Pharmacy[]|error {
         return locator:pharmacy_locator(phar_location,dbClient1);
         
