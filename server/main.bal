@@ -2,6 +2,8 @@ import ballerina/http;
 import server.login;
 import server.user;
 import ballerinax/mysql;
+import ballerina/sql;
+import server.types;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
@@ -10,21 +12,6 @@ configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
 
-
-
-type User record {|
-    int user_id;
-    
-|};
-
-type Patient record {
-    int id;
-    string name;
-    string dob;
-    string nic;
-    int? doctor_id;
-    int? caretaker_id;
-};
 
 // Initialize MySQL client
 mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
@@ -81,9 +68,6 @@ service /user on loginListener {
     int|error? resultStream1 = dbClient->queryRow(query1);
 
     // Initialize an array to store the result
-    
-    
-
 
     // Return the array of users
     return resultStream1;
