@@ -48,3 +48,11 @@ public type Prescript record {|
     string? pill_5;
 
 |};
+
+
+
+public type locator record {|
+    string district;
+    string town;
+
+|};

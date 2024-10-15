@@ -365,6 +365,7 @@ dependencies = [
 modules = [
 	{org = "sansi", packageName = "server", moduleName = "server"},
 	{org = "sansi", packageName = "server", moduleName = "server.chat_system"},
+	{org = "sansi", packageName = "server", moduleName = "server.locator"},
 	{org = "sansi", packageName = "server", moduleName = "server.login"},
 	{org = "sansi", packageName = "server", moduleName = "server.medisense_services"},
 	{org = "sansi", packageName = "server", moduleName = "server.read_user"},
