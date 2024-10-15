@@ -100,3 +100,41 @@ CREATE TABLE `user` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-10-10 10:28:50
+
+-- CREATE TABLE Reminders (
+--     reminder_id INT AUTO_INCREMENT PRIMARY KEY,
+--     user_id INT NOT NULL,
+--     reminder_date DATE NOT NULL,
+--     reminder_time TIME NOT NULL,
+--     record_id INT NOT NULL,
+--     reminder_status ENUM('Done', 'Missed', 'Pending') NOT NULL DEFAULT 'Pending',
+--     FOREIGN KEY (user_id) REFERENCES Users(user_id),
+--     FOREIGN KEY (record_id) REFERENCES Records(record_id)
+-- );
+
+-- CREATE TABLE Records (
+--     record_id INT PRIMARY KEY AUTO_INCREMENT,
+--     record VARCHAR(255) NOT NULL
+-- );
+
+CREATE TABLE medications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    dosage_form VARCHAR(255) NOT NULL,
+    dosage_strength VARCHAR(255) NOT NULL,
+    shape VARCHAR(255) NOT NULL,
+    brand VARCHAR(255),
+)
+
+-- Trigger to insert a record into MedDiary table upon inserting a record into Reminders table
+DELIMITER $$
+
+CREATE TRIGGER after_reminder_insert
+AFTER INSERT ON Reminders
+FOR EACH ROW
+BEGIN
+    INSERT INTO MedDiary (user_id, reminder_id, status)
+    VALUES (NEW.user_id, NEW.reminder_id, 'Pending');
+END $$
+
+DELIMITER ;

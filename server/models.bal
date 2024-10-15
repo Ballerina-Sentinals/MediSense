@@ -1,4 +1,5 @@
 import ballerina/time;
+import ballerina/http;
 
 public type usersignup record {|
     string username;
@@ -50,9 +51,30 @@ public type Prescript record {|
 |};
 
 
-
 public type locator record {|
     string district;
     string town;
 
+|};
+
+
+type User record {|
+    int user_id;
+    
+|};
+
+type Reminder record {|
+    int user_id;
+    Record recordInfo;
+    string date;
+    string time;
+|};
+
+type Record record {|
+    string record_data;
+|};
+
+type ReminderCreated record {|
+    *http:Created;
+     Reminder body;
 |};
