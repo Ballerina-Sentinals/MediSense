@@ -22,8 +22,8 @@ service / on loginListener {
         return login:login(req,dbClient1);
    }
 
-   resource function post signup_(usersignup user,http:Request req) returns http:Response|error {
-        return login:signup(user,req,dbClient1);
+   resource function post signup_(usersignup user) returns http:Response|error {
+        return login:signup(user,dbClient1);
    }
 
 
