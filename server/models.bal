@@ -38,6 +38,7 @@ public type Pharmacy record {
 };
 
 public type Prescript record {|
+    int prescript_id ;
     int sender_user_id;
     int receiver_user_id;
     string? pill_1;

@@ -1,9 +1,11 @@
 import ballerina/sql;
 import ballerina/http;
 import ballerina/io;
+
+
 # Description.
 #
-  
+# + prescript_id - field description  
 # + sender_user_id - field description  
 # + receiver_user_id - field description  
 # + pill_1 - field description  
@@ -12,6 +14,7 @@ import ballerina/io;
 # + pill_4 - field description  
 # + pill_5 - field description
 public type Prescript record {|
+    int prescript_id;
     int sender_user_id;
     int receiver_user_id;
     string? pill_1;
@@ -44,5 +47,23 @@ public function prescription_creater(Prescript new_prep,sql:Client dbClient) ret
     }
     response.statusCode = 200;
     response.setJsonPayload({status:"Prescription Created Successfully!"});
+    return response;
+}
+
+
+public function prescription_deleter(int prescript_id,sql:Client dbClient) returns http:Response|sql:Error{
+    sql:ParameterizedQuery query = `DELETE FROM prescriptions WHERE prescription_id = ${prescript_id};`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+
+    http:Response response = new;
+    if resultStream1 is sql:Error {
+            // Handle SQL error
+        io:println("Error occurred while executing the query: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+        // Return a successful response with caretaker info
+    
+    }
+    response.statusCode = 200;
+    response.setJsonPayload({status:"Prescription deleted Successfully!"});
     return response;
 }

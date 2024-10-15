@@ -60,5 +60,10 @@ service /user on loginListener {
         
     }
 
+    resource function delete delete_prescription/[int prescript_id]() returns http:Response|sql:Error{
+        return chat_system:prescription_deleter(prescript_id,dbClient1);
+        
+    }
+
     
 }
