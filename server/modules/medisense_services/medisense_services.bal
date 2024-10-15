@@ -1,8 +1,8 @@
-import ballerinax/mysql.driver as _;
 import ballerina/http;
 // import ballerina/io;
 // import ballerina/sql;
 import ballerinax/mysql;
+import ballerinax/mysql.driver as _;
 
 mysql:Client dbClient = check new (host = "localhost", user = "root", password = "root", database = "medisense", port = 3306, options = {
 });
