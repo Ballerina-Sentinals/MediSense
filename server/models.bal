@@ -36,3 +36,14 @@ public type Pharmacy record {
     string con_number ;
     decimal rating ;
 };
+
+public type Prescript record {|
+    int sender_user_id;
+    int receiver_user_id;
+    string? pill_1;
+    string? pill_2;
+    string? pill_3;
+    string? pill_4;
+    string? pill_5;
+
+|};

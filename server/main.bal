@@ -3,7 +3,7 @@ import server.login;
 import server.user;
 import ballerinax/mysql;
 import ballerina/sql;
-
+import server.chat_system;
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "password";
@@ -54,4 +54,11 @@ service /user on loginListener {
         return user:pharmacy_reg(new_phar,dbClient1);
         
     }
+
+    resource function post prescription_builder(Prescript new_prescription) returns http:Response|sql:Error{
+        return chat_system:prescription_creater(new_prescription,dbClient1);
+        
+    }
+
+    
 }
