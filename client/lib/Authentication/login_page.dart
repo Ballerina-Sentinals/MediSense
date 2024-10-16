@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../App/my_home_page.dart';
 import '../App/pharm_home_page.dart';
-import '../App/doc_home_page.dart';
 //import '../App/app.dart';
 import 'signup_page.dart';
 import 'dart:ui';

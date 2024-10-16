@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import "../Home/pharm_home_page_generator.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
+import "../Pharmacy_Diary/med_orders.dart";
 import 'app.dart';
 
 class PharmHomePage extends StatefulWidget {
@@ -19,9 +20,10 @@ class _PharmHomePageState extends State<PharmHomePage> {
 
   final List<Widget> _pages = [
     const HomePage(),
+    const PillOrdersPage(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Profile'];
+  final List<String> _titles = ['Home', 'Pill Orders', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -85,6 +87,10 @@ class _PharmHomePageState extends State<PharmHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.medication_liquid_outlined),
+            label: 'Pill Orders',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
           ),
@@ -100,6 +106,10 @@ class _PharmHomePageState extends State<PharmHomePage> {
 
 class HomePage extends PharmHomePageGenerator {
   const HomePage({super.key});
+}
+
+class PillOrdersPage extends PillOrderGenerator {
+  const PillOrdersPage({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+//import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import "../Home/doc_home_page_generator.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
+import "../Patient_Diary/patient_diary.dart";
 import 'app.dart';
 
 class DocHomePage extends StatefulWidget {
@@ -19,9 +21,10 @@ class _DocHomePageState extends State<DocHomePage> {
 
   final List<Widget> _pages = [
     const HomePage(),
+    const PatientDiary(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Profile'];
+  final List<String> _titles = ['Home', 'Patient Diary', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -85,6 +88,10 @@ class _DocHomePageState extends State<DocHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.sick),
+            label: 'Patient Diary',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
           ),
@@ -100,6 +107,10 @@ class _DocHomePageState extends State<DocHomePage> {
 
 class HomePage extends DocHomePageGenerator {
   const HomePage({super.key});
+}
+
+class PatientDiary extends PatientDiaryGenerator {
+  const PatientDiary({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

@@ -7,15 +7,15 @@ import 'package:provider/provider.dart';
 import '../Resources/assets.dart';
 import '../App/app.dart';
 
-class PillDiaryGenerator extends StatefulWidget {
-  const PillDiaryGenerator({super.key});
+class PillOrderGenerator extends StatefulWidget {
+  const PillOrderGenerator({super.key});
 
   @override
-  State<PillDiaryGenerator> createState() => _PillDiaryGeneratorState();
+  State<PillOrderGenerator> createState() => _PillOrderGeneratorState();
 }
 
-class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
-  Map<String, dynamic> pills = {};
+class _PillOrderGeneratorState extends State<PillOrderGenerator> {
+  Map<String, dynamic> pill_orders = {};
   @override
   void initState() {
     super.initState();
@@ -27,8 +27,8 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
 
     if (response.statusCode == 200) {
       setState(() {
-        pills = json.decode(response.body);
-        print('Pill Diary is $pills');
+        pill_orders = json.decode(response.body);
+        print('Pill Diary is $pill_orders');
         print("//////////////////////////////////////////////");
       });
     } else {
@@ -69,23 +69,23 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
               ),
               const SizedBox(height: 60.0),
               CustomExpandingWidgetVer3(
-                  listTitle: 'morning',
+                  listTitle: 'accepted',
                   units: 'pills',
-                  pairList: _getItemList('morning')),
+                  pairList: _getItemList('accepted')),
               const SizedBox(
                 height: 20,
               ),
               CustomExpandingWidgetVer3(
-                  listTitle: 'noon',
+                  listTitle: 'pending',
                   units: 'pills',
-                  pairList: _getItemList('noon')),
+                  pairList: _getItemList('pending')),
               const SizedBox(
                 height: 20,
               ),
               CustomExpandingWidgetVer3(
-                  listTitle: 'night',
+                  listTitle: 'declined',
                   units: 'pills',
-                  pairList: _getItemList('night')),
+                  pairList: _getItemList('declined')),
               const SizedBox(
                 height: 20,
               ),
@@ -96,24 +96,24 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
     );
   }
 
-  Set<Map<String, double>> _getItemList(String time) {
-    if (pills.isEmpty || !pills.containsKey(time)) {
+  Set<Map<String, double>> _getItemList(String state) {
+    if (pill_orders.isEmpty || !pill_orders.containsKey(state)) {
       return {};
-    } else if (pills[time].isEmpty) {
+    } else if (pill_orders[state].isEmpty) {
       return {
-        {"Pill reminders selected for $time": 0.0}
+        {"Pill orders $state": 0.0}
       };
     } else {
-      var itemList = pills[time].map<Map<String, double>>((item) {
-        var itemName = item['name'] as String? ?? 'Unknown';
-        var itemNumStr = item['total_calories'].toString();
+      var itemList = pill_orders[state].map<Map<String, double>>((item) {
+        var itemName = item['pill_name'] as String? ?? 'Unknown';
+        var itemNumStr = item['amount'].toString();
         var itemNum = double.tryParse(itemNumStr) ?? 0.0;
         print('Item: $itemName, Calories: $itemNum'); // Debug print
 
         return {itemName: itemNum};
       }).toSet();
 
-      print('Item list for $time: $itemList');
+      print('Item list for $state: $itemList');
       return itemList;
     }
   }

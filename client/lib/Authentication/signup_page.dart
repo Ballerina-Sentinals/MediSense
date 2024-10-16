@@ -38,12 +38,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/signup'),
+        Uri.parse('http://10.0.2.2:8080/user/signup_'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'name': nameController.text,
+          'username': nameController.text,
           'email': emailController.text,
           'role': roleController.text,
           'password': passwordController.text,
@@ -53,6 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         final user = responseData['user'];
+        print(user);
         if (user != null && user['id'] != null) {
           // Store user data in SharedPreferences
           final prefs = await SharedPreferences.getInstance();
@@ -231,7 +232,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         dropdownColor: const Color.fromARGB(255, 217, 240,
                             255), // Background color of the dropdown menu
 
-                        items: ['Patient', 'Doctor', 'Caretaker']
+                        items: ['Patient', 'Doctor', 'Pharmacy']
                             .map((String role) {
                           IconData icon;
                           switch (role) {
@@ -241,7 +242,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             case 'Doctor':
                               icon = MdiIcons.stethoscope;
                               break;
-                            case 'Caretaker':
+                            case 'Pharmacy':
                               icon = Icons.medical_services;
                               break;
                             default:

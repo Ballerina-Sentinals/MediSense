@@ -7,14 +7,14 @@ import 'package:provider/provider.dart';
 import '../Resources/assets.dart';
 import '../App/app.dart';
 
-class PillDiaryGenerator extends StatefulWidget {
-  const PillDiaryGenerator({super.key});
+class PatientDiaryGenerator extends StatefulWidget {
+  const PatientDiaryGenerator({super.key});
 
   @override
-  State<PillDiaryGenerator> createState() => _PillDiaryGeneratorState();
+  State<PatientDiaryGenerator> createState() => _PatientDiaryGeneratorState();
 }
 
-class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
+class _PatientDiaryGeneratorState extends State<PatientDiaryGenerator> {
   Map<String, dynamic> pills = {};
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
 
   Future<void> fetchCalorieDiary(String userId, String date) async {
     final response = await http
-        .get(Uri.parse('http://10.0.2.2:3000/pill-diary/$userId/$date'));
+        .get(Uri.parse('http://10.0.2.2:3000/patient-diary/$userId/$date'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -70,21 +70,19 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
               const SizedBox(height: 60.0),
               CustomExpandingWidgetVer3(
                   listTitle: 'morning',
-                  units: 'pills',
+                  units: '',
                   pairList: _getItemList('morning')),
               const SizedBox(
                 height: 20,
               ),
               CustomExpandingWidgetVer3(
-                  listTitle: 'noon',
-                  units: 'pills',
-                  pairList: _getItemList('noon')),
+                  listTitle: 'noon', units: '', pairList: _getItemList('noon')),
               const SizedBox(
                 height: 20,
               ),
               CustomExpandingWidgetVer3(
                   listTitle: 'night',
-                  units: 'pills',
+                  units: '',
                   pairList: _getItemList('night')),
               const SizedBox(
                 height: 20,

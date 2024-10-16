@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
 
 import '../../App/app.dart';
 
@@ -17,21 +15,21 @@ class DocHomePageGenerator extends StatefulWidget {
 }
 
 class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
-  Map<String, dynamic> pills = {};
+  Map<String, dynamic> patients = {};
   final date = DateTime.now().toString().substring(0, 10);
 
-  Future<void> fetchPills(String userId, String date) async {
+  Future<void> fetchPatients(String userId, String date) async {
     final response = await http
-        .get(Uri.parse('http://10.0.2.2:3000/pill-diary/$userId/$date'));
+        .get(Uri.parse('http://10.0.2.2:3000/patient-diary/$userId/$date'));
 
     if (response.statusCode == 200) {
       setState(() {
-        pills = json.decode(response.body);
-        print('Pills are $pills');
+        patients = json.decode(response.body);
+        print('Patients are $patients');
         print("//////////////////////////////////////////////");
       });
     } else {
-      throw Exception('Failed to load pill diary');
+      throw Exception('Failed to load patient diary');
     }
   }
 
@@ -98,12 +96,6 @@ class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        fetchPills(appState.userId.toString(), date);
-                      },
-                      label: Text("Add Pills"),
-                      icon: Icon(Icons.add)),
                 ],
               ),
             ),
