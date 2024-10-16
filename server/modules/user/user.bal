@@ -2,12 +2,12 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/mysql;
+import ballerina/time;
 
 public type Patient record {
-    int patient_id;
     int user_id;
     string name;
-    string dob;
+    time:Civil dob;
     string nic;
     int doctor_id ;
     int emergency_contact ;
@@ -17,7 +17,6 @@ public type Patient record {
 };
 
  public type Doctor record {
-    int doctor_id;
     int user_id;
     string name;
     string nic;
@@ -26,7 +25,6 @@ public type Patient record {
 };
 
 public type Pharmacy record {
-    int pharm_id ;
     int user_id ;
     string name ;
     string district ;
@@ -134,10 +132,10 @@ public function  pharmacy_info(http:Request req,int user_id,mysql:Client dbClien
 }
 
 
-public function patient_reg(http:Request req,Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
+public function patient_reg(Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
         // Prepare the query
     sql:ParameterizedQuery query = `INSERT INTO patients (user_id, name, dob, nic, doctor_id, emergency_contact, weight, height, allergies)
-VALUES (${new_patient.patient_id}, ${new_patient.name}, ${new_patient.dob}, ${new_patient.nic}, ${new_patient.doctor_id}, ${new_patient.emergency_contact},${new_patient.weight},${new_patient.height},${new_patient.allergies});`;
+VALUES (${new_patient.user_id},${new_patient.name}, ${new_patient.dob}, ${new_patient.nic}, ${new_patient.doctor_id}, ${new_patient.emergency_contact},${new_patient.weight},${new_patient.height},${new_patient.allergies});`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;
@@ -153,6 +151,54 @@ VALUES (${new_patient.patient_id}, ${new_patient.name}, ${new_patient.dob}, ${ne
     response.setJsonPayload({status:"Registered Successfully"});
     return response;
 }
+
+public function doctor_reg(Doctor new_doc,mysql:Client dbClient) returns sql:Error|http:Response {
+        // Prepare the query
+    sql:ParameterizedQuery query = `INSERT INTO doctors (user_id, name, nic, doctor_license, description)
+VALUES (${new_doc.user_id},${new_doc.name} ${new_doc.nic}, ${new_doc.doctor_license}, ${new_doc.description});`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
+    http:Response response = new;
+
+    if resultStream1 is sql:Error {
+            // Handle SQL error
+        io:println("Error occurred while executing the query: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+        // Return a successful response with caretaker info
+    
+    }
+    response.statusCode = 200;
+    response.setJsonPayload({status:"Registered Successfully"});
+    return response;
+}
+
+
+# Description.
+#
+# + new_phar - parameter description  
+# + dbClient - parameter description
+# + return - return value description
+public function pharmacy_reg(Pharmacy new_phar,mysql:Client dbClient) returns sql:Error|http:Response {
+        // Prepare the query
+    sql:ParameterizedQuery query = `INSERT INTO pharmacies (user_id, name, district, town,street,con_number, rating)
+VALUES (${new_phar.user_id},${new_phar.name} ${new_phar.district}, ${new_phar.town}, ${new_phar.street},${new_phar.street},${new_phar.con_number},${new_phar.rating});`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
+    http:Response response = new;
+
+    if resultStream1 is sql:Error {
+            // Handle SQL error
+        io:println("Error occurred while executing the query: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+        // Return a successful response with caretaker info
+    
+    }
+    response.statusCode = 200;
+    response.setJsonPayload({status:"Registered Successfully"});
+    return response;
+}
+
+
 
 
 

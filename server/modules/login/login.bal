@@ -74,7 +74,7 @@ public  function  login(http:Request req,mysql:Client dbClient) returns http:Res
 
 
 
-public function  signup(usersignup user, http:Request req,mysql:Client dbClient) returns http:Response|error {
+public function  signup(usersignup user, mysql:Client dbClient) returns http:Response|error {
     // Prepare the SQL query
     sql:ParameterizedQuery query = `INSERT INTO user (username, password, email, role) 
                                     VALUES (${user.username}, ${user.password}, ${user.email}, ${user.role})`;
@@ -84,6 +84,10 @@ public function  signup(usersignup user, http:Request req,mysql:Client dbClient)
 
     // Create the response
     http:Response response = new;
+    sql:ParameterizedQuery query1 = `select id from user where username = ${user.username};`;
+
+    int|error id = dbClient->queryRow(query1);
+
 
     if result is sql:Error {
         // Handle SQL error
@@ -92,7 +96,7 @@ public function  signup(usersignup user, http:Request req,mysql:Client dbClient)
     } else {
         // Return success response
         response.statusCode = 201; // 201 Created
-        response.setJsonPayload({status: "User registered successfully"});
+        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email}});
         return response;
     }
 }
