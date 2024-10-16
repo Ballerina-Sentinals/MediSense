@@ -17,11 +17,15 @@ function testFunction() {
     test:assertEquals(welcomeMsg, "Hello, John");
 }
 
+function hello(string name) returns string {
+    return "";
+}
+
 // Negative Test function
 
 @test:Config {}
 function negativeTestFunction() {
-    string welcomeMsg = hello(());
+    string welcomeMsg = hello(("123"));
     test:assertEquals(welcomeMsg, "Hello, World!");
 }
 
