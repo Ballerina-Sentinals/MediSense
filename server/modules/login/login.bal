@@ -96,7 +96,7 @@ public function  signup(usersignup user, mysql:Client dbClient) returns http:Res
     } else {
         // Return success response
         response.statusCode = 201; // 201 Created
-        response.setJsonPayload({status: "Signup successful", user: {userId: check id, email: user.email}});
+        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email}});
         return response;
     }
 }

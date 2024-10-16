@@ -219,7 +219,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "mime"
-version = "2.10.0"
+version = "2.10.1"
 dependencies = [
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
@@ -368,7 +368,6 @@ modules = [
 	{org = "sansi", packageName = "server", moduleName = "server.locator"},
 	{org = "sansi", packageName = "server", moduleName = "server.login"},
 	{org = "sansi", packageName = "server", moduleName = "server.medisense_services"},
-	{org = "sansi", packageName = "server", moduleName = "server.read_user"},
 	{org = "sansi", packageName = "server", moduleName = "server.reminders"},
 	{org = "sansi", packageName = "server", moduleName = "server.user"}
 ]
