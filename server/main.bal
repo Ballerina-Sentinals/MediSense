@@ -43,17 +43,17 @@ service / on loginListener {
         
     }
 
-    resource function put  patient_registation(Patient new_p) returns http:Response|sql:Error {
-        return user:patient_reg(new_p,dbClient1);
+    resource function put  patient_registation/[int user_id](Patient new_p) returns http:Response|sql:Error {
+        return user:patient_reg(new_p,user_id,dbClient1);
         
     }
 
-    resource function put doctor_registation(Doctor new_doc) returns http:Response|sql:Error {
-        return user:doctor_reg(new_doc,dbClient1);
+    resource function put doctor_registation/[int user_id](Doctor new_doc) returns http:Response|sql:Error {
+        return user:doctor_reg(new_doc,user_id,dbClient1);
     }
 
-    resource function put pharmacy_registation(Pharmacy new_phar) returns http:Response|sql:Error {
-        return user:pharmacy_reg(new_phar,dbClient1);
+    resource function put pharmacy_registation/[int user_id](Pharmacy new_phar) returns http:Response|sql:Error {
+        return user:pharmacy_reg(new_phar,user_id,dbClient1);
         
     }
 

@@ -18,7 +18,10 @@ public type appoinment record {|
 
 
 public type orders record{|
+    int patient_id;
+    int pharm_id;
     
+
 
 
 |};
@@ -49,6 +52,7 @@ public function create_appoinment(appoinment app_1,mysql:Client dbClient) return
 }
 
 
-public function phar_orders(){
+public function phar_orders(orders new_order) returns http:Response|error{
+
 
 }

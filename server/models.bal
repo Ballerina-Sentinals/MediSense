@@ -7,10 +7,10 @@ public type usersignup record {|
     string role;
 |};
 
+
 public type Patient record {
-    int user_id;
-    string name;
-    time:Date dob;
+    string gender;
+    string dob;
     string nic;
     int emergency_contact ;
     decimal weight ;
@@ -19,20 +19,13 @@ public type Patient record {
 };
 
  
-public type Doctor record {
-    int user_id;
-    string name;
+ public type Doctor record {
     string nic;
     string doctor_license ;
     string description;
-    int doctor_id;
-    string town;
-    string district;
 };
 
 public type Pharmacy record {
-    int user_id ;
-    string name ;
     string district ;
     string town ;
     string street ;

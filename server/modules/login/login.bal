@@ -64,7 +64,7 @@ public  function  login(http:Request req,mysql:Client dbClient) returns http:Res
         // Create a successful response
         http:Response response = new;
         response.statusCode = 200;
-        response.setJsonPayload({status: "Login successful", user: {userId: check resultStream1, email: email}});
+        response.setJsonPayload({status: "Login successful", user: {id: check resultStream1, email: email}});
         io:println(response.statusCode);
         io:println(response.getJsonPayload());
         return response;
@@ -96,7 +96,7 @@ public function  signup(usersignup user, mysql:Client dbClient) returns http:Res
     } else {
         // Return success response
         response.statusCode = 201; // 201 Created
-        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email}});
+        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email,role:user.role}});
         return response;
     }
 }

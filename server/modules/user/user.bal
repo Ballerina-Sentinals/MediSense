@@ -6,9 +6,8 @@ import ballerina/time;
 
 
 public type Patient record {
-    int user_id;
-    string name;
-    time:Date dob;
+    string gender;
+    string dob;
     string nic;
     int emergency_contact ;
     decimal weight ;
@@ -17,16 +16,12 @@ public type Patient record {
 };
 
  public type Doctor record {
-    int user_id;
-    string name;
     string nic;
     string doctor_license ;
     string description;
 };
 
 public type Pharmacy record {
-    int user_id ;
-    string name ;
     string district ;
     string town ;
     string street ;
@@ -166,10 +161,10 @@ public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:R
 }
 
 
-public function patient_reg(Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
+public function patient_reg(Patient new_patient,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
 
         // Prepare the query
-    sql:ParameterizedQuery query = `update patients set dob=${new_patient.dob}, nic=${new_patient.nic},  emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${new_patient.user_id};`;
+    sql:ParameterizedQuery query = `update patients set gender = ${new_patient.gender},ob=${new_patient.dob}, nic=${new_patient.nic},  emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;
@@ -187,9 +182,9 @@ public function patient_reg(Patient new_patient,mysql:Client dbClient) returns s
     return response;
 }
 
-public function doctor_reg(Doctor new_doc,mysql:Client dbClient) returns sql:Error|http:Response {
+public function doctor_reg(Doctor new_doc,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
         // Prepare the query
-    sql:ParameterizedQuery query = `update doctors set nic = ${new_doc.nic}, doctor_license= ${new_doc.doctor_license}, description=${new_doc.description};`;
+    sql:ParameterizedQuery query = `update doctors set nic = ${new_doc.nic}, doctor_license= ${new_doc.doctor_license}, description=${new_doc.description} where user-id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;
@@ -208,9 +203,9 @@ public function doctor_reg(Doctor new_doc,mysql:Client dbClient) returns sql:Err
 
 
 
-public function pharmacy_reg(Pharmacy new_phar,mysql:Client dbClient) returns sql:Error|http:Response {
+public function pharmacy_reg(Pharmacy new_phar,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
         // Prepare the query
-    sql:ParameterizedQuery query = `update pharacies set district= ${new_phar.district}, town= ${new_phar.town},street=${new_phar.street},con_number=${new_phar.con_number}, rating=${new_phar.rating});`;
+    sql:ParameterizedQuery query = `update pharacies set district= ${new_phar.district}, town= ${new_phar.town},street=${new_phar.street},con_number=${new_phar.con_number}, rating=${new_phar.rating} where user_id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;

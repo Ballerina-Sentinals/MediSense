@@ -1,32 +1,5 @@
 import random
-import yagmail
-
-# def generate_otp():
-#     """Generate a 6-digit OTP."""
-#     otp = random.randint(100000, 999999)
-#     return otp
-#
-# def send_otp_email(receiver_email, otp):
-#     """Send the OTP to the given email."""
-#     try:
-#         yag = yagmail.SMTP('isurumuniwije@gmail.com', 'ulwm yawm pugz pvga ')
-#         subject = '''Medisense healthcare
-#                     ----------------------
-#                         Your OTP Code'''
-#
-#         content = f"Your OTP code is {otp}. Please use this to complete your verification."
-#         yag.send(to=receiver_email, subject=subject, contents=content)
-#         return True
-#     except Exception as e:
-#         print(f"Failed to send email: {e}")
-#         return False
-#
-#
-# import yagmail
-# import random
-
-import yagmail
-import random
+import yagmail 
 
 
 def generate_otp():
