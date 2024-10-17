@@ -12,7 +12,7 @@ public type Patient record {
     string gender;
     string dob;
     string nic;
-    int emergency_contact ;
+    string emergency_contact ;
     decimal weight ;
     decimal height ;
     string allergies ;
@@ -53,14 +53,13 @@ public type locator record {|
 
 |};
 
-
-
 public type appoinment record {|
-    int? appoinment_id;
+    readonly int appoinment_id;
     int patient_id;
     int doctor_id;
     int number;
-    time:Civil date;
+    string date;
+    string created_date;
     string status;
 |};
 

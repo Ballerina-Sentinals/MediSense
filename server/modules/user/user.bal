@@ -9,7 +9,7 @@ public type Patient record {
     string gender;
     string dob;
     string nic;
-    int emergency_contact ;
+    string emergency_contact ;
     decimal weight ;
     decimal height ;
     string allergies ;
@@ -184,7 +184,7 @@ public function patient_reg(Patient new_patient,int user_id,mysql:Client dbClien
 
 public function doctor_reg(Doctor new_doc,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
         // Prepare the query
-    sql:ParameterizedQuery query = `update doctors set nic = ${new_doc.nic}, doctor_license= ${new_doc.doctor_license}, description=${new_doc.description} where user-id = ${user_id};`;
+    sql:ParameterizedQuery query = `update doctors set nic = ${new_doc.nic}, doctor_license= ${new_doc.doctor_license}, description=${new_doc.description} where user_id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;

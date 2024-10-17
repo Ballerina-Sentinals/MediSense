@@ -73,9 +73,17 @@ service / on loginListener {
         return locator:pharmacy_locator(phar_location,dbClient1);
         
     }
-     
-    resource function post set_appoinment(appoinment app_) returns http:Response|error{
-        return appoinments:create_appoinment(app_,dbClient1);
+
+    resource function post new_appoinment(appoinment new_app) returns http:Response|error {
+        return appoinments:create_appoinment(new_app,dbClient1);
+        
+    }
+    resource function get doc_appoinment/[int user_id](string date)returns table<appoinment> key(appoinment_id)|error {
+        return appoinments:view_all(user_id,date,dbClient1);
+        
+    } 
+    resource function put  appoinment_done/[int appoinment_id]() returns http:Response|sql:Error {
+        return appoinments:complete_appo(appoinment_id,dbClient1);
         
     }
     
