@@ -46,6 +46,9 @@ class MyAppState extends ChangeNotifier {
   double weight = 0;
   String allergies = '';
 
+  String doctor_license = '';
+  String description = '';
+
   MyAppState() {
     _loadUserData();
   }
@@ -88,6 +91,15 @@ class MyAppState extends ChangeNotifier {
     weight = json['weight_kg'] != null
         ? double.parse(json['weight_kg'].toString())
         : weight;
+  }
+
+  void updateDocProfileFromJson(Map<String, dynamic> json) {
+    userId = json['user_id'] ?? userId;
+    username = json['username'] ?? username;
+    name = json['name'] ?? name;
+    email = json['email'] ?? email;
+    doctor_license = json['doctor_license'] ?? doctor_license;
+    description = json['description'] ?? description;
   }
 
   Map<String, dynamic> toJson() {

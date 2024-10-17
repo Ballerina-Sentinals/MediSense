@@ -192,6 +192,7 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
 
         if (response.statusCode == 200) {
           final profileData = json.decode(response.body);
+          print('Profile Data: $profileData');
 
           // Update SharedPreferences
           final prefs = await SharedPreferences.getInstance();

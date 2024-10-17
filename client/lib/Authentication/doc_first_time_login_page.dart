@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../App/app.dart';
+import '../App/doc_home_page.dart';
 
 class DocFirstTimeLoginPage extends StatefulWidget {
   final String userId;
@@ -110,15 +111,14 @@ class _DocFirstTimeLoginPage extends State<DocFirstTimeLoginPage> {
       _formKey.currentState?.save();
       try {
         final response = await http.put(
-          Uri.parse(
-              'http://10.0.2.2:8080/patient_registation/${widget.userId}'),
+          Uri.parse('http://10.0.2.2:8080/doctor_registation/${widget.userId}'),
           headers: {'Content-Type': 'application/json; charset=UTF-8'},
           body: jsonEncode(_profileData),
         );
 
         if (response.statusCode == 200) {
           final profileData = json.decode(response.body);
-
+          print('Profile Data: $profileData');
           // Update SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           final userJson = prefs.getString('user');
@@ -130,10 +130,11 @@ class _DocFirstTimeLoginPage extends State<DocFirstTimeLoginPage> {
           }
 
           var appState = context.read<MyAppState>();
-          appState.updateProfileFromJson(profileData);
+          appState.updateDocProfileFromJson(profileData);
           appState.updateUserId(int.parse(widget.userId));
 
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const DocHomePage()));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to update profile')),
