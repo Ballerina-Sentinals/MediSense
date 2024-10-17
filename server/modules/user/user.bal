@@ -4,9 +4,37 @@ import ballerina/sql;
 import ballerina/time;
 import ballerinax/mysql;
 
+
 public type Patient record {
     string gender;
     string dob;
+    string nic;
+    int emergency_contact ;
+    decimal weight ;
+    decimal height ;
+    string allergies ;
+};
+
+ public type Doctor record {
+    string nic;
+    string doctor_license ;
+    string description;
+};
+
+public type Pharmacy record {
+    string district ;
+    string town ;
+    string street ;
+    string con_number ;
+    decimal rating ;
+};
+
+
+public type Patient_view record {
+    int patient_id;
+    int user_id;
+    string name;
+    time:Civil dob;
     string nic;
     string emergency_contact;
     decimal weight;
@@ -14,7 +42,9 @@ public type Patient record {
     string allergies;
 };
 
-public type Doctor record {
+
+ public type Doctor_view record {
+    int doctor_id;
     int user_id;
     string name;
     string nic;
@@ -22,14 +52,17 @@ public type Doctor record {
     string description;
 };
 
-public type Pharmacy record {
-    int user_id;
-    string name;
-    string district;
-    string town;
-    string street;
-    string con_number;
-    decimal rating;
+
+public type Pharmacy_view record {
+    int pharm_id;
+    int user_id ;
+    string name ;
+    string district ;
+    string town ;
+    string street ;
+    string con_number ;
+    decimal rating ;
+
 };
 
 # Description.
@@ -56,8 +89,9 @@ public type Patient_view record {
     string allergies;
 };
 
-public function patient_info(int user_id, mysql:Client dbClient) returns Patient_view|error?|http:Response {
-    // Prepare the query
+
+public function  patient_info(int user_id,mysql:Client dbClient) returns Patient_view|error?|http:Response {
+        // Prepare the query
     sql:ParameterizedQuery query = `SELECT * FROM patients WHERE id = ${user_id}`;
 
     Patient_view|error? resultStream = dbClient->queryRow(query);
@@ -83,12 +117,13 @@ public function patient_info(int user_id, mysql:Client dbClient) returns Patient
     return resultStream;
 }
 
-public function doctor_info(http:Request req, int user_id, mysql:Client dbClient) returns http:Response|Doctor|error? {
-    // Prepare the query
+
+public function  doctor_info(int user_id,mysql:Client dbClient) returns http:Response|Doctor_view|error? {
+        // Prepare the query
     sql:ParameterizedQuery query = `SELECT * FROM doctors WHERE id = ${user_id}`;
 
-    //Execute the query and fetch the results
-    Doctor|error? resultStream1 = dbClient->queryRow(query);
+        //Execute the query and fetch the results
+    Doctor_view|error? resultStream1 = dbClient->queryRow(query);
 
     // Create the response
     http:Response response = new;
@@ -111,12 +146,13 @@ public function doctor_info(http:Request req, int user_id, mysql:Client dbClient
     return resultStream1;
 }
 
-public function pharmacy_info(http:Request req, int user_id, mysql:Client dbClient) returns http:Response|Pharmacy|error? {
-    // Prepare the query
+
+public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:Response|Pharmacy_view|error? {
+        // Prepare the query
     sql:ParameterizedQuery query = `SELECT * FROM pharmacies WHERE id = ${user_id}`;
 
-    // Execute the query and fetch the results
-    Pharmacy|error? resultStream1 = dbClient->queryRow(query);
+        // Execute the query and fetch the results
+    Pharmacy_view|error? resultStream1 = dbClient->queryRow(query);
 
     // Create the response
     http:Response response = new;
@@ -141,10 +177,35 @@ public function pharmacy_info(http:Request req, int user_id, mysql:Client dbClie
 
 public function patient_reg(Patient new_patient, int user_id, mysql:Client dbClient) returns sql:Error|http:Response {
 
-    // Prepare the query
-    sql:ParameterizedQuery query = `update patients set dob=${new_patient.dob}, nic=${new_patient.nic}, emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${user_id};`;
-    sql:ExecutionResult|sql:Error resultStream1 = dbClient->execute(query);
-    // Create the response
+
+public function patient_reg(Patient new_patient,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
+
+        // Prepare the query
+    sql:ParameterizedQuery query = `update patients set gender = ${new_patient.gender},ob=${new_patient.dob}, nic=${new_patient.nic},  emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${user_id};`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
+
+    http:Response response = new;
+
+    if resultStream1 is sql:Error {
+        // Handle SQL error
+        io:println("Error occurred while executing the query: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+        // Return a successful response with caretaker info
+
+    }
+    response.statusCode = 200;
+
+    io:println("Patient registered successfully!");
+    response.setJsonPayload({status:"Registered Successfully"});
+    return response;
+}
+
+public function doctor_reg(Doctor new_doc,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
+        // Prepare the query
+    sql:ParameterizedQuery query = `update doctors set nic = ${new_doc.nic}, doctor_license= ${new_doc.doctor_license}, description=${new_doc.description} where user-id = ${user_id};`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
     http:Response response = new;
 
     if resultStream1 is sql:Error {
@@ -159,37 +220,15 @@ public function patient_reg(Patient new_patient, int user_id, mysql:Client dbCli
     return response;
 }
 
-public function doctor_reg(Doctor new_doc, mysql:Client dbClient) returns sql:Error|http:Response {
-    // Prepare the query
-    sql:ParameterizedQuery query = `INSERT INTO doctors (user_id, name, nic, doctor_license, description)
-VALUES (${new_doc.user_id},${new_doc.name} ${new_doc.nic}, ${new_doc.doctor_license}, ${new_doc.description});`;
-    sql:ExecutionResult|sql:Error resultStream1 = dbClient->execute(query);
-    // Create the response
-    http:Response response = new;
 
-    if resultStream1 is sql:Error {
-        // Handle SQL error
-        io:println("Error occurred while executing the query: ", resultStream1.toString());
-        return createErrorResponse(500, "Internal server error");
-        // Return a successful response with caretaker info
 
-    }
-    response.statusCode = 200;
-    response.setJsonPayload({status: "Registered Successfully"});
-    return response;
-}
 
-# Description.
-#
-# + new_phar - parameter description  
-# + dbClient - parameter description
-# + return - return value description
-public function pharmacy_reg(Pharmacy new_phar, mysql:Client dbClient) returns sql:Error|http:Response {
-    // Prepare the query
-    sql:ParameterizedQuery query = `INSERT INTO pharmacies (user_id, name, district, town,street,con_number, rating)
-VALUES (${new_phar.user_id},${new_phar.name} ${new_phar.district}, ${new_phar.town}, ${new_phar.street},${new_phar.street},${new_phar.con_number},${new_phar.rating});`;
-    sql:ExecutionResult|sql:Error resultStream1 = dbClient->execute(query);
-    // Create the response
+public function pharmacy_reg(Pharmacy new_phar,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
+        // Prepare the query
+    sql:ParameterizedQuery query = `update pharacies set district= ${new_phar.district}, town= ${new_phar.town},street=${new_phar.street},con_number=${new_phar.con_number}, rating=${new_phar.rating} where user_id = ${user_id};`;
+    sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
+        // Create the response
+
     http:Response response = new;
 
     if resultStream1 is sql:Error {

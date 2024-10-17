@@ -27,6 +27,7 @@ public function login(http:Request req, mysql:Client dbClient) returns http:Resp
     json|error payload = req.getJsonPayload();
     if payload is error {
         return createErrorResponse(400, "Invalid JSON payload");
+
     }
     io:println(payload);
 
@@ -130,3 +131,4 @@ public function signup(usersignup user, mysql:Client dbClient) returns http:Resp
 //         return response;
 //     }
 // }
+

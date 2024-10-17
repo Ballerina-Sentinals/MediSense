@@ -364,6 +364,7 @@ dependencies = [
 ]
 modules = [
 	{org = "sansi", packageName = "server", moduleName = "server"},
+	{org = "sansi", packageName = "server", moduleName = "server.appoinments"},
 	{org = "sansi", packageName = "server", moduleName = "server.chat_system"},
 	{org = "sansi", packageName = "server", moduleName = "server.locator"},
 	{org = "sansi", packageName = "server", moduleName = "server.login"},
