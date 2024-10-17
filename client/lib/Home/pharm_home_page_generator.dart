@@ -7,14 +7,15 @@ import 'dart:convert';
 
 import '../../App/app.dart';
 
-class HomePageGenerator extends StatefulWidget {
-  const HomePageGenerator({super.key});
+class PharmHomePageGenerator extends StatefulWidget {
+  const PharmHomePageGenerator({super.key});
 
   @override
-  State<HomePageGenerator> createState() => _HomePageGeneratorState();
+  State<PharmHomePageGenerator> createState() =>
+      _PharmDocHomePageGeneratorState();
 }
 
-class _HomePageGeneratorState extends State<HomePageGenerator> {
+class _PharmDocHomePageGeneratorState extends State<PharmHomePageGenerator> {
   Map<String, dynamic> pills = {};
   final date = DateTime.now().toString().substring(0, 10);
 
@@ -82,21 +83,9 @@ class _HomePageGeneratorState extends State<HomePageGenerator> {
                         Title(
                             color: Colors.black,
                             child: Center(
-                                child: Text('Pills for Today',
+                                child: Text('Orders',
                                     style: const TextStyle(
                                         fontSize: 24, color: Colors.black54)))),
-                        const SizedBox(height: 16.0),
-                        Text(
-                          'Your next appointment is on 12th August 2021',
-                          style: const TextStyle(
-                              fontSize: 18, color: Colors.black54),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Text(
-                          'Your next appointment is on 12th August 2021',
-                          style: const TextStyle(
-                              fontSize: 18, color: Colors.black54),
-                        ),
                         const SizedBox(height: 16.0),
                         Text(
                           'Your next appointment is on 12th August 2021',

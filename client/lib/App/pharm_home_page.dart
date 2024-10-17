@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import "../Home/home_page.dart";
+import "../Home/pharm_home_page_generator.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
+import "../Pharmacy_Diary/med_orders.dart";
 import 'app.dart';
-import "../Pill_Diary/pill_diary.dart";
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class PharmHomePage extends StatefulWidget {
+  const PharmHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _PharmHomePageState createState() => _PharmHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _PharmHomePageState extends State<PharmHomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
     const HomePage(),
-    const PillDiaryPage(),
+    const PillOrdersPage(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Pill Diary', 'Profile'];
+  final List<String> _titles = ['Home', 'Pill Orders', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.medication),
-            label: 'Pill Diary',
+            icon: Icon(Icons.medication_liquid_outlined),
+            label: 'Pill Orders',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -104,12 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class HomePage extends HomePageGenerator {
+class HomePage extends PharmHomePageGenerator {
   const HomePage({super.key});
 }
 
-class PillDiaryPage extends PillDiaryGenerator {
-  const PillDiaryPage({super.key});
+class PillOrdersPage extends PillOrderGenerator {
+  const PillOrdersPage({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

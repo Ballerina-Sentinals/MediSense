@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
+//import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import "../Home/home_page.dart";
+import "../Home/doc_home_page_generator.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
+import "../Patient_Diary/patient_diary.dart";
 import 'app.dart';
-import "../Pill_Diary/pill_diary.dart";
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class DocHomePage extends StatefulWidget {
+  const DocHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _DocHomePageState createState() => _DocHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _DocHomePageState extends State<DocHomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
     const HomePage(),
-    const PillDiaryPage(),
+    const PatientDiary(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Pill Diary', 'Profile'];
+  final List<String> _titles = ['Home', 'Patient Diary', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -87,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.medication),
-            label: 'Pill Diary',
+            icon: Icon(Icons.sick),
+            label: 'Patient Diary',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -104,12 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class HomePage extends HomePageGenerator {
+class HomePage extends DocHomePageGenerator {
   const HomePage({super.key});
 }
 
-class PillDiaryPage extends PillDiaryGenerator {
-  const PillDiaryPage({super.key});
+class PatientDiary extends PatientDiaryGenerator {
+  const PatientDiary({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

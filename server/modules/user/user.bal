@@ -1,8 +1,8 @@
 import ballerina/http;
 import ballerina/io;
 import ballerina/sql;
-import ballerinax/mysql;
 import ballerina/time;
+import ballerinax/mysql;
 
 
 public type Patient record {
@@ -36,21 +36,22 @@ public type Patient_view record {
     string name;
     time:Civil dob;
     string nic;
-    int doctor_id ;
-    int emergency_contact ;
-    decimal weight ;
-    decimal height ;
-    string allergies ;
+    string emergency_contact;
+    decimal weight;
+    decimal height;
+    string allergies;
 };
+
 
  public type Doctor_view record {
     int doctor_id;
     int user_id;
     string name;
     string nic;
-    string doctor_license ;
+    string doctor_license;
     string description;
 };
+
 
 public type Pharmacy_view record {
     int pharm_id;
@@ -61,8 +62,8 @@ public type Pharmacy_view record {
     string street ;
     string con_number ;
     decimal rating ;
-};
 
+};
 
 # Description.
 #
@@ -76,6 +77,18 @@ public function createErrorResponse(int statusCode, string message) returns http
     return response;
 }
 
+public type Patient_view record {
+    int patient_id;
+    int user_id;
+    string name;
+    time:Civil dob;
+    string nic;
+    int emergency_contact;
+    decimal weight;
+    decimal height;
+    string allergies;
+};
+
 
 public function  patient_info(int user_id,mysql:Client dbClient) returns Patient_view|error?|http:Response {
         // Prepare the query
@@ -83,7 +96,7 @@ public function  patient_info(int user_id,mysql:Client dbClient) returns Patient
 
     Patient_view|error? resultStream = dbClient->queryRow(query);
 
-        // Create the response
+    // Create the response
     http:Response response = new;
 
     if resultStream is sql:Error {
@@ -94,15 +107,16 @@ public function  patient_info(int user_id,mysql:Client dbClient) returns Patient
         io:println("An error occurred: ", resultStream.toString());
         return createErrorResponse(500, "An error occurred");
     } else if resultStream is () {
-            // Handle case where no patient is found
+        // Handle case where no patient is found
         return createErrorResponse(404, "Patient not found");
     }
     io:println(resultStream);
-        // Return a successful response with patient info
+    // Return a successful response with patient info
     response.statusCode = 200;
 
     return resultStream;
 }
+
 
 public function  doctor_info(int user_id,mysql:Client dbClient) returns http:Response|Doctor_view|error? {
         // Prepare the query
@@ -111,26 +125,27 @@ public function  doctor_info(int user_id,mysql:Client dbClient) returns http:Res
         //Execute the query and fetch the results
     Doctor_view|error? resultStream1 = dbClient->queryRow(query);
 
-        // Create the response
+    // Create the response
     http:Response response = new;
 
     if resultStream1 is sql:Error {
-            // Handle SQL error
+        // Handle SQL error
         io:println("Error occurred while executing the query: ", resultStream1.toString());
         return createErrorResponse(500, "Internal server error");
     } else if resultStream1 is error {
-            // Handle other possible errors
+        // Handle other possible errors
         io:println("An error occurred: ", resultStream1.toString());
         return createErrorResponse(500, "An error occurred");
     } else if resultStream1 is () {
-            // Handle case where no doctor is found
+        // Handle case where no doctor is found
         return createErrorResponse(404, "Doctor not found");
     }
 
-        // Return a successful response with doctor info
+    // Return a successful response with doctor info
     response.statusCode = 200;
     return resultStream1;
 }
+
 
 public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:Response|Pharmacy_view|error? {
         // Prepare the query
@@ -139,11 +154,11 @@ public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:R
         // Execute the query and fetch the results
     Pharmacy_view|error? resultStream1 = dbClient->queryRow(query);
 
-        // Create the response
+    // Create the response
     http:Response response = new;
 
     if resultStream1 is sql:Error {
-            // Handle SQL error
+        // Handle SQL error
         io:println("Error occurred while executing the query: ", resultStream1.toString());
         return createErrorResponse(500, "Internal server error");
     } else if resultStream1 is error {
@@ -151,14 +166,16 @@ public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:R
         io:println("An error occurred: ", resultStream1.toString());
         return createErrorResponse(500, "An error occurred");
     } else if resultStream1 is () {
-            // Handle case where no caretaker is found
+        // Handle case where no caretaker is found
         return createErrorResponse(404, "Pharmacy not found");
     }
 
-        // Return a successful response with caretaker info
+    // Return a successful response with caretaker info
     response.statusCode = 200;
     return resultStream1;
 }
+
+public function patient_reg(Patient new_patient, int user_id, mysql:Client dbClient) returns sql:Error|http:Response {
 
 
 public function patient_reg(Patient new_patient,int user_id,mysql:Client dbClient) returns sql:Error|http:Response {
@@ -167,16 +184,18 @@ public function patient_reg(Patient new_patient,int user_id,mysql:Client dbClien
     sql:ParameterizedQuery query = `update patients set gender = ${new_patient.gender},ob=${new_patient.dob}, nic=${new_patient.nic},  emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
+
     http:Response response = new;
 
     if resultStream1 is sql:Error {
-            // Handle SQL error
+        // Handle SQL error
         io:println("Error occurred while executing the query: ", resultStream1.toString());
         return createErrorResponse(500, "Internal server error");
         // Return a successful response with caretaker info
-    
+
     }
     response.statusCode = 200;
+
     io:println("Patient registered successfully!");
     response.setJsonPayload({status:"Registered Successfully"});
     return response;
@@ -190,16 +209,17 @@ public function doctor_reg(Doctor new_doc,int user_id,mysql:Client dbClient) ret
     http:Response response = new;
 
     if resultStream1 is sql:Error {
-            // Handle SQL error
+        // Handle SQL error
         io:println("Error occurred while executing the query: ", resultStream1.toString());
         return createErrorResponse(500, "Internal server error");
         // Return a successful response with caretaker info
-    
+
     }
     response.statusCode = 200;
-    response.setJsonPayload({status:"Registered Successfully"});
+    response.setJsonPayload({status: "Registered Successfully"});
     return response;
 }
+
 
 
 
@@ -208,24 +228,18 @@ public function pharmacy_reg(Pharmacy new_phar,int user_id,mysql:Client dbClient
     sql:ParameterizedQuery query = `update pharacies set district= ${new_phar.district}, town= ${new_phar.town},street=${new_phar.street},con_number=${new_phar.con_number}, rating=${new_phar.rating} where user_id = ${user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
+
     http:Response response = new;
 
     if resultStream1 is sql:Error {
-            // Handle SQL error
+        // Handle SQL error
         io:println("Error occurred while executing the query: ", resultStream1.toString());
         return createErrorResponse(500, "Internal server error");
         // Return a successful response with caretaker info
-    
+
     }
     response.statusCode = 200;
-    response.setJsonPayload({status:"Registered Successfully"});
+    response.setJsonPayload({status: "Registered Successfully"});
     return response;
 }
-
-
-
-
-
-
-
 

@@ -4,30 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'dart:convert';
 import '../App/app.dart';
 
-class FirstTimeLoginPage extends StatefulWidget {
+class DocFirstTimeLoginPage extends StatefulWidget {
   final String userId;
 
-  const FirstTimeLoginPage({Key? key, required this.userId}) : super(key: key);
+  const DocFirstTimeLoginPage({Key? key, required this.userId})
+      : super(key: key);
 
   @override
-  _FirstTimeLoginPageState createState() => _FirstTimeLoginPageState();
+  _DocFirstTimeLoginPage createState() => _DocFirstTimeLoginPage();
 }
 
-class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
+class _DocFirstTimeLoginPage extends State<DocFirstTimeLoginPage> {
   final _formKey = GlobalKey<FormState>();
-
   final Map<String, dynamic> _profileData = {
-    'gender': null,
-    'dob': null,
     'nic': null,
-    'emergency_contact': null,
-    'height': null,
-    'weight': null,
-    'allergies': '',
+    'doctor_license': null,
+    'description': '',
   };
 
   @override
@@ -66,14 +61,9 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    _buildDropdownField(
-                        'gender', 'Gender', ['male', 'female', 'other']),
-                    _buildDateField('dob', 'Date of Birth'),
                     _buildTextField('nic', 'NIC'),
-                    _buildTextField('emergency_contact', 'Emergency Contact'),
-                    _buildNumberField('height', 'Height (cm)'),
-                    _buildNumberField('weight', 'Weight (kg)'),
-                    _buildTextField('allergies', 'Allergies'),
+                    _buildTextField('doctor_license', 'Doctor License'),
+                    _buildTextField('description', 'Description'),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _saveProfile,
@@ -103,63 +93,6 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
     );
   }
 
-  Widget _buildDropdownField(String key, String label, List<String> items) {
-    return DropdownButtonFormField<String>(
-      value: _profileData[key],
-      decoration: InputDecoration(labelText: label),
-      items: [
-        const DropdownMenuItem<String>(
-            value: null, child: Text('Please select')),
-        ...items.map((String value) {
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        }),
-      ],
-      onChanged: (String? newValue) {
-        setState(() => _profileData[key] = newValue);
-      },
-      validator: (value) => value == null ? 'Please select a value' : null,
-    );
-  }
-
-  Widget _buildDateField(String key, String label) {
-    return TextFormField(
-      decoration: InputDecoration(labelText: label),
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (picked != null) {
-          setState(() => _profileData[key] = picked.toIso8601String());
-        }
-      },
-      controller: TextEditingController(
-        text: _profileData[key] != null
-            ? DateFormat('yyyy-MM-dd').format(DateTime.parse(_profileData[key]))
-            : '',
-      ),
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Please select a date' : null,
-    );
-  }
-
-  Widget _buildNumberField(String key, String label) {
-    return TextFormField(
-      decoration: InputDecoration(labelText: label),
-      keyboardType: TextInputType.number,
-      initialValue: _profileData[key]?.toString() ?? '',
-      onChanged: (value) {
-        setState(() {
-          _profileData[key] = value.isEmpty ? null : double.tryParse(value);
-        });
-      },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Please enter a value' : null,
-    );
-  }
-
   Widget _buildTextField(String key, String label) {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
@@ -176,19 +109,12 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
       try {
-        // Convert date to the required format
-        if (_profileData['dob'] != null) {
-          _profileData['dob'] = DateFormat('yyyy-MM-dd')
-              .format(DateTime.parse(_profileData['dob']));
-        }
-
         final response = await http.put(
           Uri.parse(
               'http://10.0.2.2:8080/patient_registation/${widget.userId}'),
           headers: {'Content-Type': 'application/json; charset=UTF-8'},
           body: jsonEncode(_profileData),
         );
-        print("called patient_registration");
 
         if (response.statusCode == 200) {
           final profileData = json.decode(response.body);
@@ -200,8 +126,6 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
             final userData = jsonDecode(userJson);
             userData.addAll(profileData);
             await prefs.setString('user', jsonEncode(userData));
-
-            // Update userId in SharedPreferences
             await prefs.setInt('userId', int.parse(widget.userId));
           }
 

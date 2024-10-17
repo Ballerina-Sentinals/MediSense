@@ -8,16 +8,17 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import '../App/app.dart';
 
-class FirstTimeLoginPage extends StatefulWidget {
+class PharmFirstTimeLoginPage extends StatefulWidget {
   final String userId;
 
-  const FirstTimeLoginPage({Key? key, required this.userId}) : super(key: key);
+  const PharmFirstTimeLoginPage({Key? key, required this.userId})
+      : super(key: key);
 
   @override
-  _FirstTimeLoginPageState createState() => _FirstTimeLoginPageState();
+  _PharmFirstTimeLoginPage createState() => _PharmFirstTimeLoginPage();
 }
 
-class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
+class _PharmFirstTimeLoginPage extends State<PharmFirstTimeLoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, dynamic> _profileData = {

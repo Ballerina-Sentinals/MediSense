@@ -8,7 +8,6 @@ type User record {|
 
 |};
 
-
 public type usersignup record {|
     string username;
     string password;
@@ -23,58 +22,60 @@ public function createErrorResponse(int statusCode, string message) returns http
     return response;
 }
 
-public  function  login(http:Request req,mysql:Client dbClient) returns http:Response|error {
-        // Fetch and validate the JSON payload
-        json|error payload = req.getJsonPayload();
-        if payload is error {
-            return createErrorResponse(400, "Invalid JSON payload");
-        }
-        io:println(payload);
+public function login(http:Request req, mysql:Client dbClient) returns http:Response|error {
+    // Fetch and validate the JSON payload
+    json|error payload = req.getJsonPayload();
+    if payload is error {
+        return createErrorResponse(400, "Invalid JSON payload");
 
-        string email = (check payload.email).toString();
-        string password = (check payload.password).toString();
+    }
+    io:println(payload);
 
-            sql:ParameterizedQuery query = `SELECT password FROM user WHERE email = ${email}`;
+    string email = (check payload.email).toString();
+    string password = (check payload.password).toString();
 
-        string|error? resultStream = dbClient->queryRow(query);
+    sql:ParameterizedQuery query = `SELECT password FROM user WHERE email = ${email}`;
 
-        if resultStream is sql:Error {
-            // Handle SQL errors if any
-            io:println("Error occurred while executing the query: ", resultStream.toString());
-            return createErrorResponse(500, "Internal server error");
-        } else if resultStream is () {
-            // Handle case where no user is found
-            return createErrorResponse(404, "Email not found");
-        }
+    string|error? resultStream = dbClient->queryRow(query);
 
-        string|error? storedPassword = resultStream;
-        if storedPassword != password {
-            return createErrorResponse(401, "Invalid credentials");
-        }
-        sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE email = ${email}`;
-
-        int|error? resultStream1 = dbClient->queryRow(query1);
-
-        if resultStream1 is sql:Error {
-            io:println("Error occurred while fetching user details: ", resultStream1.toString());
-            return createErrorResponse(500, "Internal server error");
-        }
-     
-        io:println(resultStream1);
-        // Create a successful response
-        http:Response response = new;
-        response.statusCode = 200;
-        response.setJsonPayload({status: "Login successful", user: {id: check resultStream1, email: email}});
-        io:println(response.statusCode);
-        io:println(response.getJsonPayload());
-        return response;
+    if resultStream is sql:Error {
+        // Handle SQL errors if any
+        io:println("Error occurred while executing the query: ", resultStream.toString());
+        return createErrorResponse(500, "Internal server error");
+    } else if resultStream is () {
+        // Handle case where no user is found
+        return createErrorResponse(404, "Email not found");
     }
 
+    string|error? storedPassword = resultStream;
+    if storedPassword != password {
+        return createErrorResponse(401, "Invalid credentials");
+    }
+    sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE email = ${email}`;
 
+    int|error? resultStream1 = dbClient->queryRow(query1);
+    string|error? resultStream2 = dbClient->queryRow(`SELECT role FROM user WHERE email = ${email}`);
 
+    if resultStream1 is sql:Error {
+        io:println("Error occurred while fetching user details: ", resultStream1.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
+    if resultStream2 is sql:Error {
+        io:println("Error occurred while fetching user details: ", resultStream2.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
 
+    io:println(resultStream1);
+    // Create a successful response
+    http:Response response = new;
+    response.statusCode = 200;
+    response.setJsonPayload({status: "Login successful", user: {userId: check resultStream1, email: email, role: check resultStream2}});
+    io:println(response.statusCode);
+    io:println(response.getJsonPayload());
+    return response;
+}
 
-public function  signup(usersignup user, mysql:Client dbClient) returns http:Response|error {
+public function signup(usersignup user, mysql:Client dbClient) returns http:Response|error {
     // Prepare the SQL query
     sql:ParameterizedQuery query = `INSERT INTO user (username, password, email, role) 
                                     VALUES (${user.username}, ${user.password}, ${user.email}, ${user.role})`;
@@ -87,8 +88,16 @@ public function  signup(usersignup user, mysql:Client dbClient) returns http:Res
     sql:ParameterizedQuery query1 = `select id from user where username = ${user.username};`;
 
     int|error id = dbClient->queryRow(query1);
+    string|error? resultStream2 = dbClient->queryRow(`SELECT role FROM user WHERE email = ${user.email}`);
 
-
+    if id is sql:Error {
+        io:println("Error occurred while fetching user details: ", id.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
+    if resultStream2 is sql:Error {
+        io:println("Error occurred while fetching user details: ", resultStream2.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
     if result is sql:Error {
         // Handle SQL error
         io:println("Error occurred while inserting the user: ", result.toString());
@@ -96,12 +105,30 @@ public function  signup(usersignup user, mysql:Client dbClient) returns http:Res
     } else {
         // Return success response
         response.statusCode = 201; // 201 Created
-        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email,role:user.role}});
+        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email, role: check resultStream2}});
         return response;
     }
 }
+// public function signup(usersignup user, http:Request req, mysql:Client dbClient) returns http:Response|error {
+//     // Prepare the SQL query
+//     sql:ParameterizedQuery query = `INSERT INTO user (username, password, email, role) 
+//                                     VALUES (${user.username}, ${user.password}, ${user.email}, ${user.role})`;
 
+//     // Execute the query
+//     sql:ExecutionResult|sql:Error result = dbClient->execute(query);
 
+//     // Create the response
+//     http:Response response = new;
 
-
+//     if result is sql:Error {
+//         // Handle SQL error
+//         io:println("Error occurred while inserting the user: ", result.toString());
+//         return createErrorResponse(500, "Internal server error");
+//     } else {
+//         // Return success response
+//         response.statusCode = 201; // 201 Created
+//         response.setJsonPayload({status: "User registered successfully"});
+//         return response;
+//     }
+// }
 
