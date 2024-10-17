@@ -8,9 +8,8 @@ import ballerina/time;
 public type Patient record {
     int user_id;
     string name;
-    time:Civil dob;
+    time:Date dob;
     string nic;
-    int doctor_id ;
     int emergency_contact ;
     decimal weight ;
     decimal height ;
@@ -170,7 +169,7 @@ public function  pharmacy_info(int user_id,mysql:Client dbClient) returns http:R
 public function patient_reg(Patient new_patient,mysql:Client dbClient) returns sql:Error|http:Response {
 
         // Prepare the query
-    sql:ParameterizedQuery query = `update patients set dob=${new_patient.dob}, nic=${new_patient.nic}, doctor_id=${new_patient.doctor_id}, emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${new_patient.user_id};`;
+    sql:ParameterizedQuery query = `update patients set dob=${new_patient.dob}, nic=${new_patient.nic},  emergency_contact=${new_patient.emergency_contact}, weight=${new_patient.weight}, height=${new_patient.height}, allergies=${new_patient.allergies} where user_id = ${new_patient.user_id};`;
     sql:ExecutionResult|sql:Error resultStream1  = dbClient->execute(query);
         // Create the response
     http:Response response = new;
@@ -183,6 +182,7 @@ public function patient_reg(Patient new_patient,mysql:Client dbClient) returns s
     
     }
     response.statusCode = 200;
+    io:println("Patient registered successfully!");
     response.setJsonPayload({status:"Registered Successfully"});
     return response;
 }

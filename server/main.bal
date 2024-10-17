@@ -33,26 +33,26 @@ service / on loginListener {
         
     }
 
-    resource function get  doctor_profile/[int user_id_](http:Request req)returns http:Response|user:Doctor|error? {
-        return user:doctor_info(req,user_id_,dbClient1);
+    resource function get  doctor_profile/[int user_id_]()returns http:Response|Doctor_view|error? {
+        return user:doctor_info(user_id_,dbClient1);
         
     }
 
-    resource function get  pharmacy_profile/[int user_id_](http:Request req)returns http:Response|user:Pharmacy|error? {
-        return user:pharmacy_info(req,user_id_,dbClient1);
+    resource function get  pharmacy_profile/[int user_id_]()returns http:Response|Pharmacy_view|error? {
+        return user:pharmacy_info(user_id_,dbClient1);
         
     }
 
-    resource function post  patient_registation(Patient new_p) returns http:Response|sql:Error {
+    resource function put  patient_registation(Patient new_p) returns http:Response|sql:Error {
         return user:patient_reg(new_p,dbClient1);
         
     }
 
-    resource function post doctor_registation(Doctor new_doc) returns http:Response|sql:Error {
+    resource function put doctor_registation(Doctor new_doc) returns http:Response|sql:Error {
         return user:doctor_reg(new_doc,dbClient1);
     }
 
-    resource function post pharmacy_registation(Pharmacy new_phar) returns http:Response|sql:Error {
+    resource function put pharmacy_registation(Pharmacy new_phar) returns http:Response|sql:Error {
         return user:pharmacy_reg(new_phar,dbClient1);
         
     }

@@ -10,9 +10,8 @@ public type usersignup record {|
 public type Patient record {
     int user_id;
     string name;
-    time:Civil dob;
-    string nic ;
-    int doctor_id ;
+    time:Date dob;
+    string nic;
     int emergency_contact ;
     decimal weight ;
     decimal height ;

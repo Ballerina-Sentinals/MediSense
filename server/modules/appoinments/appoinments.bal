@@ -15,6 +15,13 @@ public type appoinment record {|
     time:Civil date;
     string status;
 |};
+
+
+public type orders record{|
+    
+
+
+|};
 public function createErrorResponse(int statusCode, string message) returns http:Response {
     http:Response response = new;
     response.statusCode = statusCode;
@@ -38,5 +45,10 @@ public function create_appoinment(appoinment app_1,mysql:Client dbClient) return
     response.setJsonPayload({status:"Appoinment  Successfully"});
     return response;
 
+
+}
+
+
+public function phar_orders(){
 
 }
