@@ -1,3 +1,5 @@
+import 'package:client/Authentication/doc_first_time_login_page.dart';
+import 'package:client/Authentication/pharm_first_time_login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/signup_'),
+        Uri.parse('http://10.0.2.2:8080/signup_'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -54,6 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
         final responseData = jsonDecode(response.body);
         final user = responseData['user'];
         print(user);
+        print(user);
         if (user != null && user['id'] != null) {
           // Store user data in SharedPreferences
           final prefs = await SharedPreferences.getInstance();
@@ -63,15 +66,39 @@ class _SignUpPageState extends State<SignUpPage> {
           final appState = Provider.of<MyAppState>(context, listen: false);
           appState.updateProfileFromJson(user);
           appState.updateUserId(user['id']);
+          print('User ID: ${user['id']}');
+          print('Role: ${user['role']}');
 
           // Navigate to FirstTimeLoginPage
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  FirstTimeLoginPage(userId: user['id'].toString()),
-            ),
-          );
+          if (user['role'] == 'patient') {
+            print(roleController.text);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    FirstTimeLoginPage(userId: user['id'].toString()),
+              ),
+            );
+          } else if (user['role'] == 'doctor') {
+            print(roleController.text);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    DocFirstTimeLoginPage(userId: user['id'].toString()),
+              ),
+            );
+          } else if (user['role'] == 'pharmacy') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    PharmFirstTimeLoginPage(userId: user['id'].toString()),
+              ),
+            );
+          } else {
+            throw Exception('Invalid role');
+          }
         } else {
           throw Exception('User ID is null');
         }

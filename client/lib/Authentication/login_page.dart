@@ -2,13 +2,15 @@ import 'package:client/App/doc_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../App/my_home_page.dart';
 import '../App/pharm_home_page.dart';
 //import '../App/app.dart';
 import 'signup_page.dart';
 import 'dart:ui';
+import 'dart:async';
+import '../App/app.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -36,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/login'),
+        Uri.parse('http://10.0.2.2:8080/login_'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -53,6 +55,9 @@ class _LoginPageState extends State<LoginPage> {
           // Store login information
           await storeLoginInfo(responseData['user']);
 
+          // Update userId in MyAppState
+          Provider.of<MyAppState>(context, listen: false)
+              .updateUserId(responseData['user']['userId']);
           // Handle successful login
           if (responseData['user']['role'] == 'patient') {
             Navigator.pushReplacement(
@@ -94,9 +99,14 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> storeLoginInfo(Map<String, dynamic> user) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', user['id'].toString());
+    await prefs.setString('userId', user['userId'].toString());
+    print('user id: ${user['userId']}');
+    print(prefs.getString('userId'));
     await prefs.setString('role', user['role']);
+    print('role: ${user['role']}');
     //await prefs.setString('email', user['email']);
+    MyAppState().updateUserId(int.parse(prefs.getString('userId')!));
+    print('user id: ${MyAppState().userId}');
   }
 
   @override

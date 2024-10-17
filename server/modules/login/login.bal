@@ -87,7 +87,16 @@ public function signup(usersignup user, mysql:Client dbClient) returns http:Resp
     sql:ParameterizedQuery query1 = `select id from user where username = ${user.username};`;
 
     int|error id = dbClient->queryRow(query1);
+    string|error? resultStream2 = dbClient->queryRow(`SELECT role FROM user WHERE email = ${user.email}`);
 
+    if id is sql:Error {
+        io:println("Error occurred while fetching user details: ", id.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
+    if resultStream2 is sql:Error {
+        io:println("Error occurred while fetching user details: ", resultStream2.toString());
+        return createErrorResponse(500, "Internal server error");
+    }
     if result is sql:Error {
         // Handle SQL error
         io:println("Error occurred while inserting the user: ", result.toString());
@@ -95,7 +104,7 @@ public function signup(usersignup user, mysql:Client dbClient) returns http:Resp
     } else {
         // Return success response
         response.statusCode = 201; // 201 Created
-        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email}});
+        response.setJsonPayload({status: "Signup successful", user: {id: check id, email: user.email, role: check resultStream2}});
         return response;
     }
 }

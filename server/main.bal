@@ -30,8 +30,8 @@ service / on loginListener {
         return login:signup(user, dbClient1);
     }
 
-    resource function get patient_profile/[int user_id_](http:Request req) returns user:Patient|error?|http:Response {
-        return user:patient_info(req, user_id_, dbClient1);
+    resource function get patient_profile/[int user_id_](http:Request req) returns user:Patient_view|error?|http:Response {
+        return user:patient_info(user_id_, dbClient1);
 
     }
 
@@ -45,8 +45,8 @@ service / on loginListener {
 
     }
 
-    resource function post patient_registation(Patient new_p) returns http:Response|sql:Error {
-        return user:patient_reg(new_p, dbClient1);
+    resource function put patient_registation/[int user_id_](Patient new_p) returns sql:Error|http:Response {
+        return user:patient_reg(new_p, user_id_, dbClient1);
 
     }
 
