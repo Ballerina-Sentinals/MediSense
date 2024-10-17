@@ -5,6 +5,7 @@ import ballerinax/mysql;
 import ballerina/sql;
 import server.chat_system;
 import server.locator;
+import server.appoinments;
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "password";
@@ -27,8 +28,8 @@ service / on loginListener {
    }
 
 
-    resource function get patient_profile/[int user_id_](http:Request req)returns user:Patient|error?|http:Response {
-        return user:patient_info(req,user_id_,dbClient1);
+    resource function get patient_profile/[int user_id_]()returns user:Patient_view|error?|http:Response {
+        return user:patient_info(user_id_,dbClient1);
         
     }
 
@@ -65,13 +66,17 @@ service / on loginListener {
         return chat_system:prescription_deleter(prescript_id,dbClient1);
         
     }
-    resource function post locator_doctor(locator doc_location)returns Doctor[]|error? {
+    resource function post locator_doctor(locator doc_location)returns locator:Doctor[]|error {
         return locator:doctor_locator(doc_location,dbClient1);
     }   
     resource function post locator_pharmacy(locator phar_location)returns Pharmacy[]|error {
         return locator:pharmacy_locator(phar_location,dbClient1);
         
     }
-    
+     
+    resource function post set_appoinment(appoinment app_) returns http:Response|error{
+        return appoinments:create_appoinment(app_,dbClient1);
+        
+    }
     
 }

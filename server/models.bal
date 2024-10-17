@@ -19,12 +19,16 @@ public type Patient record {
     string allergies ;
 };
 
- public type Doctor record {
+ 
+public type Doctor record {
     int user_id;
     string name;
     string nic;
     string doctor_license ;
     string description;
+    int doctor_id;
+    string town;
+    string district;
 };
 
 public type Pharmacy record {
@@ -56,3 +60,49 @@ public type locator record {|
     string town;
 
 |};
+
+
+
+public type appoinment record {|
+    int? appoinment_id;
+    int patient_id;
+    int doctor_id;
+    int number;
+    time:Civil date;
+    string status;
+|};
+
+
+
+public type Patient_view record {
+    int patient_id;
+    int user_id;
+    string name;
+    time:Civil dob;
+    string nic;
+    int doctor_id ;
+    int emergency_contact ;
+    decimal weight ;
+    decimal height ;
+    string allergies ;
+};
+
+ public type Doctor_view record {
+    int doctor_id;
+    int user_id;
+    string name;
+    string nic;
+    string doctor_license ;
+    string description;
+};
+
+public type Pharmacy_view record {
+    int pharm_id;
+    int user_id ;
+    string name ;
+    string district ;
+    string town ;
+    string street ;
+    string con_number ;
+    decimal rating ;
+};

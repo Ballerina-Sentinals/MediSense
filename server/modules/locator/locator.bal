@@ -12,6 +12,9 @@ public type Doctor record {
     string nic;
     string doctor_license ;
     string description;
+    int doctor_id;
+    string town;
+    string district;
 };
 
 public type Pharmacy record {
@@ -47,7 +50,6 @@ public function doctor_locator(locator location,sql:Client dbClient) returns Doc
     }
     
     // Close the database connection.
-    check dbClient.close();
     
     // Return the list of JavaScript files.
     return jsFiles;
