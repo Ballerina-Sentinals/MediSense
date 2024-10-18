@@ -3,8 +3,8 @@ import ballerina/io;
 import ballerina/sql;
 import ballerinax/mysql;
 
-public type appoinment record {|
-    readonly int appoinment_id;
+public type appointment record {|
+    readonly int appointment_id;
     int patient_id;
     int doctor_id;
     int number;
@@ -26,7 +26,7 @@ public function createErrorResponse(int statusCode, string message) returns http
     return response;
 }
 
-public function create_appoinment(appoinment app_1, mysql:Client dbClient) returns http:Response|error {
+public function create_appoinment(appointment app_1, mysql:Client dbClient) returns http:Response|error {
     sql:ParameterizedQuery counter = `select count(*) where doctor_id=${app_1.doctor_id} and date = ${app_1.date};`;
     int number_ = check dbClient->queryRow(counter);
     sql:ParameterizedQuery query = `Insert into appoinments(patient_id,doctor_id,number,date,status) values (${app_1.patient_id},${app_1.doctor_id},${number_ + 1},${app_1.date},${app_1.status});`;
@@ -46,16 +46,15 @@ public function create_appoinment(appoinment app_1, mysql:Client dbClient) retur
 
 }
 
-public function view_all(int user_id, string date, mysql:Client dbClient) returns table<appoinment> key(appoinment_id)|error {
+public function view_all(int user_id, string date, mysql:Client dbClient) returns table<appointment> key(appointment_id)|error {
     sql:ParameterizedQuery query1 = `select doctor_id from doctors where user_id = ${user_id};`;
     int doctor_id = check dbClient->queryRow(query1);
-    io:println(doctor_id);
 
-    sql:ParameterizedQuery query = `select * from appoinments where doctor_id  = ${doctor_id} and date =${date};`;
-    stream<appoinment, sql:Error?> result = dbClient->query(query);
+    sql:ParameterizedQuery query = `select * from appointments where doctor_id  = ${doctor_id} and date =${date};`;
+    stream<appointment, sql:Error?> result = dbClient->query(query);
 
-    table<appoinment> key(appoinment_id) appoinments = table [];
-    error? e = result.forEach(function(appoinment app) {
+    table<appointment> key(appointment_id) appoinments = table [];
+    error? e = result.forEach(function(appointment app) {
         appoinments.put(app);
     });
 

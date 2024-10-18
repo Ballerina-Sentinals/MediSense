@@ -49,8 +49,8 @@ public type locator record {|
 
 |};
 
-public type appoinment record {|
-    readonly int appoinment_id;
+public type appointment record {|
+    readonly int appointment_id;
     int patient_id;
     int doctor_id;
     int number;
