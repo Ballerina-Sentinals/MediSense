@@ -9,7 +9,7 @@ import ballerinax/mysql;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
-configurable string dbPassword = "2001";
+configurable string dbPassword = "Pafs&SQL@123";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "Ballerina";
@@ -34,7 +34,6 @@ service / on loginListener {
     }
 
     
-
     resource function put patient_registation/[int user_id](Patient new_p) returns http:Response|sql:Error {
         return user:patient_reg(new_p, user_id, dbClient1);
 
@@ -68,8 +67,11 @@ service / on loginListener {
 
     }
 
-    resource function get getPost (string? category) returns Post[]|error{
-        return community:get_post(category, dbClient1);
+    resource function get getPosts(string? category) returns Post[]|error{
+        if category is string {
+            return community:get_posts(category, dbClient1);
+        }
+        return community:get_posts((),dbClient1);
     }
 
     resource function get getPostByIndex (int index) returns Post|http:NotFound{
@@ -81,7 +83,24 @@ service / on loginListener {
     }
 
     resource function delete deletePost(int index) returns http:NoContent|error {
-        return community:delete_posts(index, dbClient1);
+        return community:delete_post(index, dbClient1);
         
     }
-}    
+
+    resource function post createComment(NewComment comment) returns CommentCreated|http:BadRequest|error {
+        return community:add_comment(comment, dbClient1);
+    }
+
+    resource function get getComments(int PostIndex) returns Comment[]|http:NotFound|error {
+        return community:get_comments(PostIndex, dbClient1);
+    }
+
+    resource function get postWithComments(int index) returns PostWithComments|http:NotFound|error {
+        return community:get_post_with_comments(index, dbClient1);
+    }
+
+    resource function delete deleteComment(int index) returns http:NoContent|error {
+        return community:delete_comment(index, dbClient1);
+    }
+
+}   
