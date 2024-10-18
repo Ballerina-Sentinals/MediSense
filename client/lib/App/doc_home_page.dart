@@ -48,20 +48,11 @@ class _DocHomePageState extends State<DocHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 38, 126, 120),
         elevation: 1.0,
-        shadowColor: Colors.grey.shade400, // Set the shadow color
-        surfaceTintColor: Colors.white,
-
-        // title: Image.asset(
-        //   'lib/Resources/images/logo.png',
-        //   fit: BoxFit.contain,
-        //   height: 120,
-        // ),
-
         centerTitle: true,
         title: Text(_titles[_currentIndex],
-            style: const TextStyle(color: Colors.grey)),
+            style: const TextStyle(color: Color.fromARGB(255, 180, 233, 233))),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

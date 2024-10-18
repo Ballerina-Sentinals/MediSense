@@ -21,7 +21,7 @@ class _PatientDiaryGeneratorState extends State<PatientDiaryGenerator> {
     super.initState();
   }
 
-  Future<void> fetchCalorieDiary(String userId, String date) async {
+  Future<void> fetchPillDiary(String userId, String date) async {
     final response = await http
         .get(Uri.parse('http://10.0.2.2:3000/patient-diary/$userId/$date'));
 
@@ -42,16 +42,16 @@ class _PatientDiaryGeneratorState extends State<PatientDiaryGenerator> {
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Image.asset(
-          'lib/Resources/images/001_blueCapsules.jpg',
+          'lib/Resources/images/DocHomeBG.jpg',
           fit: BoxFit.cover,
           // height: 120,
         ),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            color: Colors.white.withOpacity(0.5),
-          ),
-        ),
+        // BackdropFilter(
+        //   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        //   child: Container(
+        //     color: Colors.white.withOpacity(0.5),
+        //   ),
+        // ),
         SingleChildScrollView(
           child: Column(
             children: [
@@ -64,7 +64,7 @@ class _PatientDiaryGeneratorState extends State<PatientDiaryGenerator> {
                       'appState.userId.toString() is ${appState.userId.toString()}');
                   print('formatted Date is ${formattedDate}');
 
-                  fetchCalorieDiary(appState.userId.toString(), formattedDate);
+                  fetchPillDiary(appState.userId.toString(), formattedDate);
                 },
               ),
               const SizedBox(height: 60.0),
