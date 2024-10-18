@@ -17,6 +17,10 @@ function testFunction() {
     test:assertEquals(welcomeMsg, "Hello, John");
 }
 
+function hello(string? name) returns string {
+    return "";
+}
+
 // Negative Test function
 
 @test:Config {}
@@ -31,3 +35,4 @@ function negativeTestFunction() {
 function afterSuiteFunc() {
     io:println("I'm the after suite function!");
 }
+

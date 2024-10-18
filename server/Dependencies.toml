@@ -366,6 +366,8 @@ modules = [
 	{org = "sansi", packageName = "server", moduleName = "server"},
 	{org = "sansi", packageName = "server", moduleName = "server.appoinments"},
 	{org = "sansi", packageName = "server", moduleName = "server.chat_system"},
+	{org = "sansi", packageName = "server", moduleName = "server.community"},
+	{org = "sansi", packageName = "server", moduleName = "server.doctor"},
 	{org = "sansi", packageName = "server", moduleName = "server.locator"},
 	{org = "sansi", packageName = "server", moduleName = "server.login"},
 	{org = "sansi", packageName = "server", moduleName = "server.medisense_services"},

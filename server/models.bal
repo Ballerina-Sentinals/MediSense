@@ -2,6 +2,7 @@ import ballerina/time;
 import ballerina/http;
 import ballerina/sql;
 
+
 public type usersignup record {|
     string username;
     string password;
@@ -45,7 +46,7 @@ public type Prescript record {|
 
 |};
 
-<<<<<<<<< Temporary merge branch 1
+
 
 public type locator record {|
     string district;
@@ -53,7 +54,7 @@ public type locator record {|
 
 |};
 
-<<<<<<<<< Temporary merge branch 1
+
 
 type User record {|
     int user_id;
@@ -75,9 +76,9 @@ type ReminderCreated record {|
     *http:Created;
      Reminder body;
 |};
-=========
-public type appoinment record {|
-    readonly int appoinment_id;
+
+public type Appointment record {|
+    readonly int appointment_id;
     int patient_id;
     int doctor_id;
     int number;
@@ -86,7 +87,7 @@ public type appoinment record {|
     string status;
 |};
 
-public type Patient_view record {
+public type PatientView record {|
     int patient_id;
     int user_id;
     string name;
@@ -97,18 +98,18 @@ public type Patient_view record {
     decimal weight;
     decimal height;
     string allergies;
-};
+|};
 
-public type Doctor_view record {
+public type DoctorView record {|
     int doctor_id;
     int user_id;
     string name;
     string nic;
     string doctor_license;
     string description;
-};
+|};
 
-public type Pharmacy_view record {
+public type PharmacyView record {|
     int pharm_id;
     int user_id;
     string name;
@@ -117,5 +118,68 @@ public type Pharmacy_view record {
     string street;
     string con_number;
     decimal rating;
-};
->>>>>>>>> Temporary merge branch 2
+|};
+
+type Post record {|
+    @sql:Column {name: "id"}
+    readonly int id;
+    @sql:Column {name: "user_id"}
+    int userId;
+    @sql:Column {name: "content"}
+    string description;
+    @sql:Column {name: "tags"}
+    string tags;
+    @sql:Column {name: "category"}
+    string category;
+|};
+
+type Comment record {|
+    @sql:Column {name: "id"}
+    readonly int id;
+    @sql:Column {name: "post_id"}
+    int postId;
+    @sql:Column {name: "user_id"}
+    int userId;
+    @sql:Column {name: "content"}
+    string description;
+    |};
+
+public type NewPost record {|
+    int user_Id;
+    string description;
+    string tags;
+    string category;
+|};
+
+public type PostCreated record {|
+    *http:Created;
+    Post body;
+    |};
+
+type CommentCreated record {|
+    *http:Created;
+     Comment body;
+    |};
+
+type NewComment record {|
+    int postId;
+    int userId;
+    string description;
+    |};
+
+type PostWithMeta record {|
+    int id;
+    int userId;
+    string description;
+    Meta meta;
+|};
+
+type Meta record {|
+    string[] tags;
+    string category;
+|};
+
+type PostWithComments record {|
+    Post post;
+    Comment[] comments;
+|};
