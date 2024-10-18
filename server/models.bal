@@ -1,5 +1,6 @@
 import ballerina/time;
 import ballerina/http;
+import ballerina/sql;
 
 public type usersignup record {|
     string username;
@@ -45,9 +46,9 @@ public type Prescript record {|
 |};
 
 
-
 public type locator record {|
     string district;
     string town;
 
 |};
+

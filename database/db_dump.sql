@@ -138,22 +138,7 @@ CREATE TABLE IF NOT EXISTS posts (
     user_id INT,
     content TEXT,
     tags VARCHAR(255),
-    category ENUM (
-        '#DietAndNutrition',
-        '#CaregiverSupport',
-        '#PatientSupport',
-        '#DoctorsInsights',
-        '#PharmacyAdvice',
-        '#Symptoms',
-        '#WellnessHacks',
-        '#HealthAdvice',
-        '#Medication',
-        '#MentalHealth',
-        '#HealthyBody',
-        '#SelfCare',
-        '#IllnessSupport',
-        '#Other'
-    ),
+    category ENUM ('General', 'Medication', 'Diet', 'Exercise', 'Symptoms', 'Treatment', 'Diagnosis', 'Prevention', 'Support', 'Research', 'Other'),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
@@ -163,6 +148,7 @@ CREATE TABLE IF NOT EXISTS comments (
     comment_id INT PRIMARY KEY AUTO_INCREMENT,
     post_id INT,
     user_id INT,
+    content TEXT,
     FOREIGN KEY (post_id) REFERENCES posts(id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
