@@ -7,34 +7,32 @@ public type usersignup record {|
     string role;
 |};
 
-
 public type Patient record {
     string gender;
     string dob;
     string nic;
-    string emergency_contact ;
-    decimal weight ;
-    decimal height ;
-    string allergies ;
+    string emergency_contact;
+    decimal weight;
+    decimal height;
+    string allergies;
 };
 
- 
- public type Doctor record {
+public type Doctor record {
     string nic;
-    string doctor_license ;
+    string doctor_license;
     string description;
 };
 
 public type Pharmacy record {
-    string district ;
-    string town ;
-    string street ;
-    string con_number ;
-    decimal rating ;
+    string district;
+    string town;
+    string street;
+    string con_number;
+    decimal rating;
 };
 
 public type Prescript record {|
-    int prescript_id ;
+    int prescript_id;
     int sender_user_id;
     int receiver_user_id;
     string? pill_1;
@@ -44,8 +42,6 @@ public type Prescript record {|
     string? pill_5;
 
 |};
-
-
 
 public type locator record {|
     string district;
@@ -63,37 +59,35 @@ public type appoinment record {|
     string status;
 |};
 
-
-
 public type Patient_view record {
     int patient_id;
     int user_id;
     string name;
     time:Civil dob;
     string nic;
-    int doctor_id ;
-    int emergency_contact ;
-    decimal weight ;
-    decimal height ;
-    string allergies ;
+    int doctor_id;
+    int emergency_contact;
+    decimal weight;
+    decimal height;
+    string allergies;
 };
 
- public type Doctor_view record {
+public type Doctor_view record {
     int doctor_id;
     int user_id;
     string name;
     string nic;
-    string doctor_license ;
+    string doctor_license;
     string description;
 };
 
 public type Pharmacy_view record {
     int pharm_id;
-    int user_id ;
-    string name ;
-    string district ;
-    string town ;
-    string street ;
-    string con_number ;
-    decimal rating ;
+    int user_id;
+    string name;
+    string district;
+    string town;
+    string street;
+    string con_number;
+    decimal rating;
 };
