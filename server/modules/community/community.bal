@@ -20,7 +20,7 @@ type Post record {|
     string category;
 |};
 
-type comment record {|
+type Comment record {|
     @sql:Column {name: "id"}
     readonly int id;
     @sql:Column {name: "post_id"}
@@ -45,7 +45,7 @@ type PostCreated record {|
 
 type CommentCreated record {|
     *http:Created;
-    comment body;
+     Comment body;
     |};
 
 type NewComment record {|
@@ -64,6 +64,11 @@ type PostWithMeta record {|
 type Meta record {|
     string[] tags;
     string category;
+|};
+
+type PostWithComments record {|
+    Post post;
+    Comment[] comments;
 |};
 
 function transformPost(Post post) returns PostWithMeta => {
