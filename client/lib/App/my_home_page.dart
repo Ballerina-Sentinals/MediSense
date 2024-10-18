@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import "../Home/home_page.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
 import 'app.dart';
+import "../Pill_Diary/pill_diary.dart";
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,8 +20,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     const HomePage(),
+    const PillDiaryPage(),
     const ProfilePage(),
   ];
+  final List<String> _titles = ['Home', 'Pill Diary', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -49,21 +52,21 @@ class _MyHomePageState extends State<MyHomePage> {
         shadowColor: Colors.grey.shade400, // Set the shadow color
         surfaceTintColor: Colors.white,
 
-        title: Image.asset(
-          'assets/logo.png',
-          fit: BoxFit.contain,
-          height: 120,
-        ),
+        // title: Image.asset(
+        //   'lib/Resources/images/logo.png',
+        //   fit: BoxFit.contain,
+        //   height: 120,
+        // ),
 
         centerTitle: true,
-        // title: Text(_titles[_currentIndex],
-        //     style: const TextStyle(color: Colors.grey)),
+        title: Text(_titles[_currentIndex],
+            style: const TextStyle(color: Colors.grey)),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 4) {
+          if (index == 3) {
             _handleLogout();
           } else {
             setState(() {
@@ -71,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           }
         },
-        selectedItemColor: Colors.green.shade800,
+        selectedItemColor: const Color.fromARGB(255, 46, 125, 100),
 
         // selectedItemColor: const Color.fromARGB(
         // 255, 125, 167, 255), // Set the color for selected items
@@ -84,12 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Plan Diet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Calorie Diary',
+            icon: Icon(Icons.medication),
+            label: 'Pill Diary',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -107,6 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class HomePage extends HomePageGenerator {
   const HomePage({super.key});
+}
+
+class PillDiaryPage extends PillDiaryGenerator {
+  const PillDiaryPage({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

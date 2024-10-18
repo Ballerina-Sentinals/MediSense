@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../App/app.dart';
+import 'package:intl/intl.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -26,7 +26,7 @@ class CustomElevatedButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: AssetImage('assets/$image.jpg'),
+            image: AssetImage('$image'),
             fit: BoxFit.cover,
           ),
         ),
@@ -34,10 +34,85 @@ class CustomElevatedButton extends StatelessWidget {
           width: 300,
           height: 100,
           alignment: Alignment.center,
-          child: Text(buttonText),
+          child: Text(buttonText,
+              style: const TextStyle(fontSize: 28, color: Colors.white),
+              textAlign: TextAlign.center),
         ),
       ),
     );
+  }
+}
+
+class DateCard extends StatelessWidget {
+  final DateTime date;
+  final Color color;
+
+  const DateCard({
+    super.key,
+    required this.date,
+    this.color = const Color.fromARGB(255, 190, 219, 239), // Default color
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style1 = theme.textTheme.displaySmall!.copyWith(
+      color: Color.fromARGB(255, 25, 68, 119).withOpacity(0.8),
+    );
+
+    return Padding(
+      padding:
+          const EdgeInsets.all(20), // Add padding around the outer Container
+      child: Container(
+        height: 200,
+        width: 160,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 166, 237, 223),
+          borderRadius: BorderRadius.circular(15), // Add rounded corners
+        ),
+        padding: const EdgeInsets.all(10),
+        constraints: BoxConstraints(
+          maxWidth: 160, // Set the maximum width for the text to wrap
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 30),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary),
+                const SizedBox(width: 10),
+                Text(
+                  formatDateDay(date),
+                  style: style1,
+                  softWrap: true,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const SizedBox(width: 6),
+                Text(
+                  formatDateMonth(date),
+                  style: style1,
+                  softWrap: true,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String formatDateMonth(DateTime date) {
+    final DateFormat formatter = DateFormat('MMMM');
+    return formatter.format(date);
+  }
+
+  String formatDateDay(DateTime date) {
+    final DateFormat formatter = DateFormat('dd');
+    return formatter.format(date);
   }
 }
 
@@ -170,13 +245,70 @@ class BigCard extends StatelessWidget {
       color: theme.colorScheme.primary,
     );
 
-    return Card(
-      color: const Color(0xffF0F0F2),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
+    return Padding(
+      padding:
+          const EdgeInsets.all(20), // Add padding around the outer Container
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 207, 226, 238).withOpacity(0.8),
+          borderRadius: BorderRadius.circular(30), // Add rounded corners
+        ),
+        padding: const EdgeInsets.all(10),
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: 160, // Set the maximum width for the text to wrap
+          ),
+          child: Text(
+            text_,
+            style: style1,
+            softWrap: true,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ImageCard extends StatelessWidget {
+  final String text_;
+  final String image;
+  final double height;
+  final double width;
+
+  const ImageCard({
+    super.key,
+    required this.text_,
+    required this.image,
+    this.height = 200.0, // Default height
+    this.width = 160.0, // Default width
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style1 = theme.textTheme.displaySmall!.copyWith(
+      color: theme.colorScheme.primary,
+    );
+
+    return Padding(
+      padding:
+          const EdgeInsets.all(20), // Add padding around the outer Container
+      child: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 207, 226, 238).withOpacity(0.8),
+          borderRadius: BorderRadius.circular(30), // Add rounded corners
+          image: DecorationImage(
+            image: AssetImage(image),
+            fit: BoxFit.cover,
+          ),
+        ),
+        padding: const EdgeInsets.all(10),
         child: Text(
           text_,
           style: style1,
+          softWrap: true,
         ),
       ),
     );
@@ -558,11 +690,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
       },
       calendarStyle: CalendarStyle(
         selectedDecoration: BoxDecoration(
-          color: Colors.green[600],
+          color: const Color.fromARGB(255, 67, 135, 160),
           shape: BoxShape.circle,
         ),
         todayDecoration: BoxDecoration(
-          color: Colors.green[200],
+          color: const Color.fromARGB(255, 138, 166, 194),
           shape: BoxShape.circle,
         ),
         defaultDecoration: const BoxDecoration(
@@ -772,7 +904,7 @@ class _CustomExpandingWidgetVer3 extends State<CustomExpandingWidgetVer3> {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.green.shade200,
+                      color: const Color.fromARGB(255, 154, 221, 215),
                     ),
                     child: ListTile(
                       title: Text(widget.listTitle),
