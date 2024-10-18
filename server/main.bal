@@ -1,16 +1,22 @@
-import ballerina/http;
+import server.appoinments;
+import server.chat_system;
+import server.locator;
 import server.login;
 import server.user;
+
+import ballerina/http;
+import ballerina/sql;
 import ballerinax/mysql;
 import ballerina/sql;
-import server.types;
-
+import server.chat_system;
+import server.locator;
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "2003";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
-configurable string dbName = "Ballerina";
+
+configurable string dbName = "medisense";
 
 
 // Initialize MySQL client
@@ -21,125 +27,66 @@ listener http:Listener loginListener = new (8080);
 
 listener http:Listener reminderListener = new(8080);
 
-service /user on loginListener {
+service / on loginListener {
+
+   resource function post login_(http:Request req)  returns http:Response|error
+   {
+        return login:login(req,dbClient1);
+   }
+
+   resource function post signup_(usersignup user,http:Request req) returns http:Response|error {
+        return login:signup(user,req,dbClient1);
+   }
 
 
-   resource function post login(http:Request req) returns sql:Error|error|int|error? {
-    // Fetch and validate the JSON payload
-    json|error payload = req.getJsonPayload();
+    resource function get patient_profile/[int user_id_](http:Request req)returns user:Patient|error?|http:Response {
+        return user:patient_info(req,user_id_,dbClient1);
+        
+    }
+
+    resource function get  doctor_profile/[int user_id_](http:Request req)returns http:Response|user:Doctor|error? {
+        return user:doctor_info(req,user_id_,dbClient1);
+        
+    }
+
+    resource function get  pharmacy_profile/[int user_id_](http:Request req)returns http:Response|user:Pharmacy|error? {
+        return user:pharmacy_info(req,user_id_,dbClient1);
+        
+    }
+
+    resource function post  patient_registation(Patient new_p) returns http:Response|sql:Error {
+        return user:patient_reg(new_p,dbClient1);
+        
+    }
+
+    resource function post doctor_registation(Doctor new_doc) returns http:Response|sql:Error {
+        return user:doctor_reg(new_doc,dbClient1);
+    }
+
+    resource function post pharmacy_registation(Pharmacy new_phar) returns http:Response|sql:Error {
+        return user:pharmacy_reg(new_phar,dbClient1);
+        
+    }
+
+    resource function post prescription_builder(Prescript new_prescription) returns http:Response|sql:Error{
+        return chat_system:prescription_creater(new_prescription,dbClient1);
+        
+    }
+
+    resource function delete delete_prescription/[int prescript_id]() returns http:Response|sql:Error{
+        return chat_system:prescription_deleter(prescript_id,dbClient1);
+        
+    }
+    resource function post locator_doctor(locator doc_location)returns Doctor[]|error? {
+        return locator:doctor_locator(doc_location,dbClient1);
+        
+    }
+
+
+    resource function post locator_pharmacy(locator phar_location)returns Pharmacy[]|error {
+        return locator:pharmacy_locator(phar_location,dbClient1);
+        
+    }
     
-    if payload is error {
-        return error("Invalid JSON payload");
-    }
-
-    // Extract the username and password from the payload
-    string email = (check payload.email).toString();
-    string password = (check payload.password).toString();
-
-    // Prepare the query to fetch the stored password for the given username
-    sql:ParameterizedQuery query = `SELECT password FROM user WHERE email = ${email}`;
-
-    // Execute the query and fetch the result
-    string|error? resultStream = dbClient->queryRow(query);
-
-    // Get the first result from the stream
     
-
-    if resultStream is sql:Error {
-        // Handle SQL errors if any
-        return resultStream;
-    } else if resultStream is () {
-        // Handle case where no user is found
-        return error("email not found");
-    }
-
-    // Extract the stored password
-    string|error? storedPassword = resultStream;
-
-    // Check if the stored password matches the provided password
-    if storedPassword != password {
-        return error("Invalid credentials");
-    }
-
-    // Prepare the query to fetch user details after successful login
-    sql:ParameterizedQuery query1 = `SELECT user.id FROM user WHERE email = ${email}`;
-
-    // Execute the query to fetch user details
-    int|error? resultStream1 = dbClient->queryRow(query1);
-
-    // Initialize an array to store the result
-
-    // Return the array of users
-    return resultStream1;
 }
-
-
-    
-
-    resource function get getAllPatients(http:Request req) returns Patient[]|sql:Error|error {
-    // Fetch and validate the JSON payload
-        json|error payload = req.getJsonPayload();
-
-        if payload is error {
-        // Handle the error properly, return or log
-            io:println("Error fetching JSON payload: ", payload.message());
-            return error("Invalid JSON payload");
-        }
-
-    // Extract the user_id field safely
-        json|error userIdJson = payload.user_id;
-        if userIdJson is () {
-            return error("user_id field is missing");
-        }
-
-        string|error? user_id = (check userIdJson).toString();
-
-    // Prepare the query
-        sql:ParameterizedQuery query = `SELECT id, name, dob, nic, doctor_id, caretaker_id FROM patients WHERE id = ${check user_id}`;
-
-    // Execute the query and fetch the results
-        stream<Patient, sql:Error?> resultStream = dbClient->query(query);
-
-    // Initialize an empty array to hold the patients
-        Patient[] patients = [];
-
-    // Iterate over the result stream and populate the array
-        error? e = resultStream.forEach(function(Patient patient) {
-            patients.push(patient);
-        });
-
-        if e is sql:Error {
-            return e; // Return error if any occurred during iteration
-
-        }
-
-        return patients; // Return the array of patients
-    }
-
-    // resource function get getAllPatients() returns sql:Error|Patient[] {
-    //     string query = "SELECT id, name, dob, nic, doctor_id, caretaker_id FROM patients";
-
-    //     // Execute the query and fetch the results
-    //     stream<Patient, sql:Error?> resultStream = dbClient->query(query);
-
-    //     // Initialize an empty array to hold the patients
-    //     Patient[] patients = [];
-
-    //     // Iterate over the result stream and populate the array
-    //     error? e = resultStream.forEach(function(Patient patient) {
-    //         patients.push(patient);
-    //     });
-
-    //     if e is sql:Error {
-    //         return e; // Return error if any
-    //     }
-
-    //     return patients; // Return the array of patients
-    // }
-
-}
-
-
-
-
-

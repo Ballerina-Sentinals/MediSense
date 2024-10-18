@@ -1,11 +1,16 @@
+import 'package:client/App/doc_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import 'package:provider/provider.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../App/my_home_page.dart';
+import '../App/pharm_home_page.dart';
 //import '../App/app.dart';
 import 'signup_page.dart';
+import 'dart:ui';
+import 'dart:async';
+import '../App/app.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -33,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/login'),
+        Uri.parse('http://10.0.2.2:8080/login_'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -43,16 +48,36 @@ class _LoginPageState extends State<LoginPage> {
         }),
       );
       if (response.statusCode == 200) {
-        final responseData = response.body;
-        if (responseData == 'Login successful') {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData['status'] == 'Login successful') {
+          print(responseData);
+          // Store login information
+          await storeLoginInfo(responseData['user']);
+
+          // Update userId in MyAppState
+          Provider.of<MyAppState>(context, listen: false)
+              .updateUserId(responseData['user']['userId']);
           // Handle successful login
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MyHomePage()),
-          );
+          if (responseData['user']['role'] == 'patient') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          } else if (responseData['user']['role'] == 'doctor') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const DocHomePage()),
+            );
+          } else if (responseData['user']['role'] == 'pharmacy') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const PharmHomePage()),
+            );
+          }
         } else {
           setState(() {
-            errorMessage = responseData;
+            errorMessage = responseData['message'];
           });
         }
       } else {
@@ -63,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       setState(() {
         errorMessage = 'An error occurred. Please try again.';
+        print(e);
       });
     } finally {
       setState(() {
@@ -71,90 +97,169 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // Future<void> _fetchUserProfile(MyAppState appState) async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final profileData = json.decode(response.body);
-  //       appState.updateProfileFromJson(profileData);
-  //     } else {
-  //       print('Failed to fetch user profile');
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching user profile: $e');
-  //   }
-  // }
+  Future<void> storeLoginInfo(Map<String, dynamic> user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', user['userId'].toString());
+    print('user id: ${user['userId']}');
+    print(prefs.getString('userId'));
+    await prefs.setString('role', user['role']);
+    print('role: ${user['role']}');
+    //await prefs.setString('email', user['email']);
+    MyAppState().updateUserId(int.parse(prefs.getString('userId')!));
+    print('user id: ${MyAppState().userId}');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              if (isLoading)
-                const CircularProgressIndicator()
-              else
-                ElevatedButton(
-                  onPressed: login,
-                  child: const Text('Login'),
-                ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignUpPage()),
-                  );
-                },
-                child: const Text("Don't have an account? Sign Up"),
-              ),
-              if (errorMessage.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-            ],
+        centerTitle: true,
+        backgroundColor: Color.fromARGB(255, 217, 240, 255),
+        title: const Text(
+          'MediSense',
+          style: TextStyle(
+            color: Color.fromARGB(255, 36, 114, 113),
+            fontFamily: 'Montserrat', // Change to your desired font family
+            fontSize: 24, // Change to your desired font size
+            fontWeight: FontWeight.bold, // Change to your desired font weight
           ),
         ),
       ),
+      body: Stack(fit: StackFit.expand, children: <Widget>[
+        Image.asset(
+          'lib/Resources/images/001_blueCapsules.jpg',
+          fit: BoxFit.cover,
+          // height: 120,
+        ),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            color: Colors.white.withOpacity(0.5),
+          ),
+        ),
+        Center(
+          child: Card(
+            color: const Color.fromARGB(255, 217, 240, 248)
+                .withOpacity(0.7), // Adjust the opacity as needed
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'lib/Resources/images/logo.png',
+                          fit: BoxFit.cover,
+                          height: 100,
+                          width: 78,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 217, 247, 255)
+                            .withOpacity(0.5), // Background color
+                        borderRadius:
+                            BorderRadius.circular(8.0), // Rounded corners
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 217, 247, 255)
+                                .withOpacity(0.1),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                            labelText: 'Email',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(16.0)),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 217, 247, 255)
+                            .withOpacity(0.5), // Background color
+                        borderRadius:
+                            BorderRadius.circular(8.0), // Rounded corners
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 217, 247, 255)
+                                .withOpacity(0.1),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: const InputDecoration(
+                            labelText: 'Password',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(16.0)),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (isLoading)
+                      const CircularProgressIndicator()
+                    else
+                      ElevatedButton(
+                        onPressed: login,
+                        child: const Text('Login'),
+                      ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUpPage()),
+                        );
+                      },
+                      child: const Text("Don't have an account? Sign Up"),
+                    ),
+                    if (errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          errorMessage,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )
+      ]),
     );
   }
 }

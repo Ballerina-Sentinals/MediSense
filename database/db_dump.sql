@@ -123,8 +123,8 @@ CREATE TABLE medications (
     dosage_form VARCHAR(255) NOT NULL,
     dosage_strength VARCHAR(255) NOT NULL,
     shape VARCHAR(255) NOT NULL,
-    brand VARCHAR(255),
-)
+    brand VARCHAR(255)
+);
 
 -- Trigger to insert a record into MedDiary table upon inserting a record into Reminders table
 DELIMITER $$

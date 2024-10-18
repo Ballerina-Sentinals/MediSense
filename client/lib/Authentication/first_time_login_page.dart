@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,59 +19,87 @@ class FirstTimeLoginPage extends StatefulWidget {
 
 class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
   final _formKey = GlobalKey<FormState>();
+
   final Map<String, dynamic> _profileData = {
     'gender': null,
-    'date_of_birth': null,
-    'height_cm': null,
-    'weight_kg': null,
-    'dietary_preference': null,
+    'dob': null,
+    'nic': null,
+    'emergency_contact': null,
+    'height': null,
+    'weight': null,
     'allergies': '',
-    'ethnicity': null,
-    'activity_level': null,
-    'current_calories_per_day': null,
-    'weight_goal': null,
-    'target_weight_kg': null,
-    'weight_change_rate': null,
   };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Complete Your Profile')),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildDropdownField(
-                  'gender', 'Gender', ['male', 'female', 'other']),
-              _buildDateField('date_of_birth', 'Date of Birth'),
-              _buildNumberField('height_cm', 'Height (cm)'),
-              _buildNumberField('weight_kg', 'Weight (kg)'),
-              _buildDropdownField('dietary_preference', 'Dietary Preference',
-                  ['vegetarian', 'non_vegetarian', 'vegan']),
-              _buildTextField('allergies', 'Allergies'),
-              _buildDropdownField('ethnicity', 'Ethnicity',
-                  ['sri_lankan', 'south_asian', 'asian', 'non_asian']),
-              _buildDropdownField('activity_level', 'Activity Level',
-                  ['light', 'moderate', 'active', 'very_active']),
-              _buildNumberField(
-                  'current_calories_per_day', 'Current Daily Calories'),
-              _buildDropdownField(
-                  'weight_goal', 'Weight Goal', ['maintain', 'lose', 'gain']),
-              _buildNumberField('target_weight_kg', 'Target Weight (kg)'),
-              _buildDropdownField('weight_change_rate', 'Weight Change Rate',
-                  ['0', '200', '400', '600', '800']),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: const Text('Save Profile'),
-              ),
-            ],
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 217, 240, 255),
+        title: const Text(
+          'MediSense',
+          style: TextStyle(
+            color: Color.fromARGB(255, 36, 114, 113),
+            fontFamily: 'Montserrat',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
+      body: Stack(fit: StackFit.expand, children: <Widget>[
+        Image.asset(
+          'lib/Resources/images/001_blueCapsules.jpg',
+          fit: BoxFit.cover,
+        ),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            color: Colors.white.withOpacity(0.5),
+          ),
+        ),
+        Center(
+          child: Card.outlined(
+            color: const Color.fromARGB(255, 201, 234, 245).withOpacity(0.7),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _buildDropdownField(
+                        'gender', 'Gender', ['male', 'female', 'other']),
+                    _buildDateField('dob', 'Date of Birth'),
+                    _buildTextField('nic', 'NIC'),
+                    _buildTextField('emergency_contact', 'Emergency Contact'),
+                    _buildNumberField('height', 'Height (cm)'),
+                    _buildNumberField('weight', 'Weight (kg)'),
+                    _buildTextField('allergies', 'Allergies'),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _saveProfile,
+                      child: const Text('Save Profile'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      child: const Text('Skip'),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text("Return to Login"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
@@ -142,40 +172,27 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString('user');
-    if (userJson != null) {
-      final userData = jsonDecode(userJson);
-      Provider.of<MyAppState>(context, listen: false)
-          .updateProfileFromJson(userData);
-
-      // Update userId in MyAppState
-      if (userData['id'] != null) {
-        Provider.of<MyAppState>(context, listen: false)
-            .updateUserId(userData['id']);
-      }
-    }
-  }
-
   Future<void> _saveProfile() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
       try {
+        // Convert date to the required format
+        if (_profileData['dob'] != null) {
+          _profileData['dob'] = DateFormat('yyyy-MM-dd')
+              .format(DateTime.parse(_profileData['dob']));
+        }
+
         final response = await http.put(
-          Uri.parse('http://10.0.2.2:3000/user-profile/${widget.userId}'),
+          Uri.parse(
+              'http://10.0.2.2:8080/patient_registation/${widget.userId}'),
           headers: {'Content-Type': 'application/json; charset=UTF-8'},
           body: jsonEncode(_profileData),
         );
+        print("called patient_registration");
 
         if (response.statusCode == 200) {
           final profileData = json.decode(response.body);
+          print('Profile Data: $profileData');
 
           // Update SharedPreferences
           final prefs = await SharedPreferences.getInstance();
@@ -200,6 +217,7 @@ class _FirstTimeLoginPageState extends State<FirstTimeLoginPage> {
           );
         }
       } catch (e) {
+        print('Error: $e'); // Log the error
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('An error occurred. Please try again.')),
         );

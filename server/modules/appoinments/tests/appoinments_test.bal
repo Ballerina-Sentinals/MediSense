@@ -3,6 +3,12 @@ import ballerina/test;
 
 // Before Suite Function
 
+public function hello(string? name) returns string {
+    if name !is () {
+        return string `Hello, ${name}`;
+    }
+    return "Hello, World!";
+}
 @test:BeforeSuite
 function beforeSuiteFunc() {
     io:println("I'm the before suite function!");

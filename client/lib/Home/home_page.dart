@@ -1,10 +1,11 @@
 // import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../../App/app.dart';
-
-import 'dart:ui';
 
 class HomePageGenerator extends StatefulWidget {
   const HomePageGenerator({super.key});
@@ -14,13 +15,31 @@ class HomePageGenerator extends StatefulWidget {
 }
 
 class _HomePageGeneratorState extends State<HomePageGenerator> {
+  Map<String, dynamic> pills = {};
+  final date = DateTime.now().toString().substring(0, 10);
+
+  Future<void> fetchPills(String userId, String date) async {
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:3000/pill-diary/$userId/$date'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        pills = json.decode(response.body);
+        print('Pills are $pills');
+        print("//////////////////////////////////////////////");
+      });
+    } else {
+      throw Exception('Failed to load pill diary');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Image.asset(
-          'assets/bg.png',
+          'lib/Resources/images/001_blueCapsules.jpg',
           fit: BoxFit.cover,
           // height: 120,
         ),
@@ -45,63 +64,56 @@ class _HomePageGeneratorState extends State<HomePageGenerator> {
                   ),
                   const SizedBox(height: 16.0),
                   Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      // color: const Color.fromRGBO(200, 230, 201, 0.5),
-                      color: Color.fromRGBO(255, 255, 255, 0.5),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 165, 210, 233)
+                          .withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    padding: const EdgeInsets.all(16.0),
-                    // color: Colors.green.shade100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
                       children: [
-                        Text("test text"),
-                        const SizedBox(width: 16.0),
+                        Title(
+                            color: Colors.black,
+                            child: Center(
+                                child: Text('Pills for Today',
+                                    style: const TextStyle(
+                                        fontSize: 24, color: Colors.black54)))),
+                        const SizedBox(height: 16.0),
+                        Text(
+                          'Your next appointment is on 12th August 2021',
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 16.0),
+                        Text(
+                          'Your next appointment is on 12th August 2021',
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 16.0),
+                        Text(
+                          'Your next appointment is on 12th August 2021',
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 16.0),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  // my meals container
-                  Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Color.fromRGBO(255, 255, 255, 0.5),
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'My Meals',
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text("test text"),
-                        ],
-                      )),
-                  const SizedBox(height: 16.0),
-                  // my stats container
-                  Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Color.fromRGBO(255, 255, 255, 0.5),
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'My Stats',
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text("test text"),
-                        ],
-                      )),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        fetchPills(appState.userId.toString(), date);
+                      },
+                      label: Text("Add Pills"),
+                      icon: Icon(Icons.add)),
                 ],
               ),
             ),
