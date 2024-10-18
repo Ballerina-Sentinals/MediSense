@@ -1,3 +1,8 @@
+-- DROP DATABASE ballerina;
+
+-- CREATE DATABASE ballerina;
+-- USE ballerina;
+
 -- MySQL dump 10.13  Distrib 8.0.39, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: Ballerina
@@ -126,15 +131,53 @@ CREATE TABLE medications (
     brand VARCHAR(255)
 );
 
--- Trigger to insert a record into MedDiary table upon inserting a record into Reminders table
-DELIMITER $$
+-- DROP TABLE posts;
 
-CREATE TRIGGER after_reminder_insert
-AFTER INSERT ON Reminders
-FOR EACH ROW
-BEGIN
-    INSERT INTO MedDiary (user_id, reminder_id, status)
-    VALUES (NEW.user_id, NEW.reminder_id, 'Pending');
-END $$
+CREATE TABLE IF NOT EXISTS posts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    content TEXT,
+    tags VARCHAR(255),
+    category ENUM (
+        '#DietAndNutrition',
+        '#CaregiverSupport',
+        '#PatientSupport',
+        '#DoctorsInsights',
+        '#PharmacyAdvice',
+        '#Symptoms',
+        '#WellnessHacks',
+        '#HealthAdvice',
+        '#Medication',
+        '#MentalHealth',
+        '#HealthyBody',
+        '#SelfCare',
+        '#IllnessSupport',
+        '#Other'
+    ),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
 
-DELIMITER ;
+-- DROP TABLE comments;
+
+CREATE TABLE IF NOT EXISTS comments (
+    comment_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_id INT,
+    user_id INT,
+    FOREIGN KEY (post_id) REFERENCES posts(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+-- -- Trigger to insert a record into MedDiary table upon inserting a record into Reminders table
+-- DELIMITER $$
+
+-- CREATE TRIGGER after_reminder_insert
+-- AFTER INSERT ON Reminders
+-- FOR EACH ROW
+-- BEGIN
+--     INSERT INTO MedDiary (user_id, reminder_id, status)
+--     VALUES (NEW.user_id, NEW.reminder_id, 'Pending');
+-- END $$
+
+-- DELIMITER ;
+
+

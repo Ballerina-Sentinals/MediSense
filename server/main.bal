@@ -7,9 +7,7 @@ import server.user;
 import ballerina/http;
 import ballerina/sql;
 import ballerinax/mysql;
-import ballerina/sql;
-import server.chat_system;
-import server.locator;
+
 // MySQL Database configuration
 configurable string dbUser = "root";
 configurable string dbPassword = "2003";
@@ -24,8 +22,6 @@ mysql:Client dbClient = check new (host = dbHost, port = dbPort, user = dbUser, 
 
 // Define HTTP listener
 listener http:Listener loginListener = new (8080);
-
-listener http:Listener reminderListener = new(8080);
 
 service / on loginListener {
 
