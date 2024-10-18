@@ -79,7 +79,7 @@ public function pharmacy_locator(locator location,sql:Client dbClient) returns P
     }
     
     // Close the database connection.
-    check dbClient.close();
+
     
     // Return the list of JavaScript files.
     return jsFiles;

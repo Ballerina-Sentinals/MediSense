@@ -18,7 +18,6 @@ public type Patient record {
 };
 
 public type Doctor record {
-
     string nic;
     string doctor_license;
     string description;
@@ -30,7 +29,6 @@ public type Pharmacy record {
     string street;
     string con_number;
     decimal rating;
-
 };
 
 public type Prescript record {|
@@ -45,6 +43,22 @@ public type Prescript record {|
 
 |};
 
+public type locator record {|
+    string district;
+    string town;
+
+|};
+
+public type appoinment record {|
+    readonly int appoinment_id;
+    int patient_id;
+    int doctor_id;
+    int number;
+    string date;
+    string created_date;
+    string status;
+|};
+
 public type Patient_view record {
     int patient_id;
     int user_id;
@@ -57,21 +71,6 @@ public type Patient_view record {
     decimal height;
     string allergies;
 };
-
-public type locator record {|
-    string district;
-    string town;
-
-|};
-
-public type appoinment record {|
-    int? appoinment_id;
-    int patient_id;
-    int doctor_id;
-    int number;
-    time:Civil date;
-    string status;
-|};
 
 public type Doctor_view record {
     int doctor_id;
