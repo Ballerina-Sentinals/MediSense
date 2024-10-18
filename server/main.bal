@@ -82,8 +82,13 @@ service / on loginListener {
 
     }
 
-    resource function get doc_appoinment/[int user_id]/[string date]() returns table<appointments:appointment> key(appointment_id)|error {
+    resource function get doc_appoinment/[int user_id]/[string date]() returns table<appointments:view_p> key(appointment_id)|error {
         return appointments:view_all(user_id, date, dbClient1);
+
+    }
+
+    resource function get doc_appoinment_booked/[int user_id]/[string date]() returns table<appointments:view_p> key(appointment_id)|error {
+        return appointments:view_all_booked(user_id, date, dbClient1);
 
     }
 

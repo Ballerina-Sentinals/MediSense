@@ -6,11 +6,22 @@ import ballerinax/mysql;
 public type appointment record {|
     readonly int appointment_id;
     int patient_id;
+    string name;
     int doctor_id;
     int number;
     string date;
     string created_date;
     string status;
+|};
+
+public type view_p record {|
+    readonly int appointment_id;
+    string name;
+    int number;
+    int doctor_id;
+    string date;
+    string status;
+
 |};
 
 public type orders record {|
@@ -46,15 +57,35 @@ public function create_appoinment(appointment app_1, mysql:Client dbClient) retu
 
 }
 
-public function view_all(int user_id, string date, mysql:Client dbClient) returns table<appointment> key(appointment_id)|error {
+public function view_all(int user_id, string date, mysql:Client dbClient) returns table<view_p> key(appointment_id)|error {
     sql:ParameterizedQuery query1 = `select doctor_id from doctors where user_id = ${user_id};`;
     int doctor_id = check dbClient->queryRow(query1);
 
-    sql:ParameterizedQuery query = `select * from appointments where doctor_id  = ${doctor_id} and date =${date};`;
-    stream<appointment, sql:Error?> result = dbClient->query(query);
+    sql:ParameterizedQuery query = `select * from all_p where doctor_id  = ${doctor_id} and date =${date};`;
+    stream<view_p, sql:Error?> result = dbClient->query(query);
 
-    table<appointment> key(appointment_id) appoinments = table [];
-    error? e = result.forEach(function(appointment app) {
+    table<view_p> key(appointment_id) appoinments = table [];
+    error? e = result.forEach(function(view_p app) {
+        appoinments.put(app);
+    });
+
+    if (e is error) {
+        return e; // Return the error if something goes wrong.
+    }
+
+    return appoinments;
+
+}
+
+public function view_all_booked(int user_id, string date, mysql:Client dbClient) returns table<view_p> key(appointment_id)|error {
+    sql:ParameterizedQuery query1 = `select doctor_id from doctors where user_id = ${user_id};`;
+    int doctor_id = check dbClient->queryRow(query1);
+
+    sql:ParameterizedQuery query = `select * from all_p where doctor_id  = ${doctor_id} and date =${date} and status ='booked;`;
+    stream<view_p, sql:Error?> result = dbClient->query(query);
+
+    table<view_p> key(appointment_id) appoinments = table [];
+    error? e = result.forEach(function(view_p app) {
         appoinments.put(app);
     });
 

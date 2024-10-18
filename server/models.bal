@@ -52,6 +52,7 @@ public type locator record {|
 public type appointment record {|
     readonly int appointment_id;
     int patient_id;
+    string name;
     int doctor_id;
     int number;
     string date;
@@ -91,3 +92,13 @@ public type Pharmacy_view record {
     string con_number;
     decimal rating;
 };
+
+public type view_p record {|
+    readonly int appointment_id;
+    string name;
+    int number;
+    int doctor_id;
+    string date;
+    string status;
+
+|};
