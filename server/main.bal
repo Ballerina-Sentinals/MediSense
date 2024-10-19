@@ -103,4 +103,10 @@ service / on loginListener {
         return community:delete_comment(index, dbClient1);
     }
 
+    resource function get getPostWithMeta(int index) returns PostWithMeta|http:NotFound|error {
+        return community:get_post_with_meta(index, dbClient1);
+    }
+
+    
+
 }   

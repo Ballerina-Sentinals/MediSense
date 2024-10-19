@@ -140,7 +140,16 @@ public function get_posts(string? category,mysql:Client dbClient) returns Post[]
         return http:NO_CONTENT;
     }
 
-    
+    public function get_post_with_meta(int id, mysql:Client dbClient) returns PostWithMeta|http:NotFound|error {
+        Post|error post = dbClient->queryRow(`SELECT * FROM POSTS WHERE ID = ${id}`);
+        if (post is error) {
+            return http:NOT_FOUND;
+        }
+        return transformPost(post);
+    }
+
+    // public function filter_by_tags(string[] tags, mysql:Client dbClient) returns Post[]|error {
+        
 
 
         
