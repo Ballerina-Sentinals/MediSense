@@ -1,3 +1,4 @@
+import ballerina/time;
 
 public type usersignup record {|
     string username;
@@ -42,14 +43,16 @@ public type Prescript record {|
 
 |};
 
+
+
 public type locator record {|
     string district;
     string town;
 
 |};
 
-public type appointment record {|
-    readonly int appointment_id;
+public type appoinment record {|
+    readonly int appoinment_id;
     int patient_id;
     int doctor_id;
     int number;
@@ -69,7 +72,7 @@ public type view_p record {|
 |};
 
 public type Patient_view record {
-    //int patient_id;
+    int patient_id;
     int user_id;
     string name;
     string dob;
@@ -79,18 +82,18 @@ public type Patient_view record {
     decimal weight;
     decimal height;
     string allergies;
-};
+|};
 
-public type Doctor_view record {
+public type DoctorView record {|
     int doctor_id;
     int user_id;
     string name;
     string nic;
     string doctor_license;
     string description;
-};
+|};
 
-public type Pharmacy_view record {
+public type PharmacyView record {|
     int pharm_id;
     int user_id;
     string name;
@@ -100,33 +103,3 @@ public type Pharmacy_view record {
     string con_number;
     decimal rating;
 };
-
-public type Time record {|
-    int hour;
-    int minute;
-    string am_pm;
-
-|};
-
-public type Reminder record {|
-    int user_id;
-    string time;
-    string date;
-    string description;
-|};
-
-public type View_Reminder record {|
-    int reminder_id;
-    string time;
-    string date;
-    string description;
-|};
-
-public type view_appo record {|
-    readonly int appointment_id;
-    int patient_id;
-    int number;
-    string doc_name;
-    string date;
-|};
-

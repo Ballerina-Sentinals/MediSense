@@ -1,21 +1,19 @@
-import server.appointments;
+import server.appoinments;
 import server.chat_system;
 import server.locator;
 import server.login;
 import server.reminders;
 import server.user;
-
 import ballerina/http;
 import ballerina/sql;
 import ballerinax/mysql;
 
 // MySQL Database configuration
 configurable string dbUser = "root";
-configurable string dbPassword = "2003";
+configurable string dbPassword = "Pafs&SQL@123";
 configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
-
-configurable string dbName = "medisense";
+configurable string dbName = "Ballerina";
 
 mysql:Client dbClient1 = check new (host = dbHost, port = dbPort, user = dbUser, password = dbPassword, database = dbName);
 listener http:Listener loginListener = new (8080);
@@ -36,17 +34,8 @@ service / on loginListener {
 
     }
 
-    resource function get doctor_profile/[int user_id_]() returns http:Response|Doctor_view|error? {
-        return user:doctor_info(user_id_, dbClient1);
-
-    }
-
-    resource function get pharmacy_profile/[int user_id_]() returns http:Response|Pharmacy_view|error? {
-        return user:pharmacy_info(user_id_, dbClient1);
-
-    }
-
-    resource function put patient_registation/[int user_id](Patient new_p) returns sql:Error|http:Response {
+    
+    resource function put patient_registation/[int user_id](Patient new_p) returns http:Response|sql:Error {
         return user:patient_reg(new_p, user_id, dbClient1);
 
     }
@@ -57,6 +46,11 @@ service / on loginListener {
 
     resource function put pharmacy_registation/[int user_id](Pharmacy new_phar) returns http:Response|sql:Error {
         return user:pharmacy_reg(new_phar, user_id, dbClient1);
+
+    }
+
+    resource function post prescription_builder(Prescript new_prescription) returns http:Response|sql:Error {
+        return chat_system:prescription_creater(new_prescription, dbClient1);
 
     }
 
@@ -74,38 +68,18 @@ service / on loginListener {
 
     }
 
-    resource function post new_appoinment(appointment new_app) returns http:Response|error {
-        return appointments:create_appointment(new_app, dbClient1);
+    resource function post new_appoinment(appoinment new_app) returns http:Response|error {
+        return appoinments:create_appoinment(new_app, dbClient1);
 
     }
 
-    resource function get doc_appoinment/[int user_id]/[string date]() returns table<view_p> key(appointment_id)|error {
-        return appointments:view_all(user_id, date, dbClient1);
+    resource function get doc_appoinment/[int user_id](string date) returns table<appoinment> key(appoinment_id)|error {
+        return appoinments:view_all(user_id, date, dbClient1);
 
     }
 
     resource function put appoinment_done/[int appoinment_id]() returns http:Response|sql:Error {
-        return appointments:complete_appo(appoinment_id, dbClient1);
-
-    }
-
-    resource function get doc_appoinment_booked/[int user_id]/[string date]() returns table<appointments:view_p> key(appointment_id)|error {
-        return appointments:view_all_booked(user_id, date, dbClient1);
-
-    }
-
-    resource function post add_reminder(Reminder new_reminder) returns http:Response|error? {
-        return reminders:create_reminder(new_reminder, dbClient1);
-
-    }
-
-    resource function get view_reminder/[int user_id]/[string date]() returns error|reminders:View_Reminder[] {
-        return reminders:view_reminders(date, user_id, dbClient1);
-
-    }
-
-    resource function get view_appointments/[int user_id]/[string date]() returns error|table<appointments:view_appo> key(appointment_id) {
-        return appointments:view_patient_appo(user_id, date, dbClient1);
+        return appoinments:complete_appo(appoinment_id, dbClient1);
 
     }
 
