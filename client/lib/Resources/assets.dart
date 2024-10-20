@@ -26,7 +26,7 @@ class CustomElevatedButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: AssetImage('$image'),
+            image: AssetImage(image),
             fit: BoxFit.cover,
           ),
         ),
@@ -35,7 +35,8 @@ class CustomElevatedButton extends StatelessWidget {
           height: 100,
           alignment: Alignment.center,
           child: Text(buttonText,
-              style: const TextStyle(fontSize: 28, color: Colors.white),
+              style: const TextStyle(
+                  fontSize: 28, color: Color.fromARGB(255, 16, 108, 83)),
               textAlign: TextAlign.center),
         ),
       ),
@@ -50,14 +51,14 @@ class DateCard extends StatelessWidget {
   const DateCard({
     super.key,
     required this.date,
-    this.color = const Color.fromARGB(255, 190, 219, 239), // Default color
+    this.color = const Color.fromARGB(255, 241, 243, 245), // Default color
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style1 = theme.textTheme.displaySmall!.copyWith(
-      color: Color.fromARGB(255, 25, 68, 119).withOpacity(0.8),
+      color: Color.fromARGB(255, 25, 97, 119).withOpacity(0.8),
     );
 
     return Padding(
@@ -67,7 +68,7 @@ class DateCard extends StatelessWidget {
         height: 200,
         width: 160,
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 166, 237, 223),
+          color: Color.fromARGB(255, 240, 255, 250),
           borderRadius: BorderRadius.circular(15), // Add rounded corners
         ),
         padding: const EdgeInsets.all(10),

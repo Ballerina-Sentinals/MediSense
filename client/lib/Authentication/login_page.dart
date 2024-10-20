@@ -13,7 +13,7 @@ import 'dart:async';
 import '../App/app.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -52,12 +52,24 @@ class _LoginPageState extends State<LoginPage> {
 
         if (responseData['status'] == 'Login successful') {
           print(responseData);
+          print(responseData['user']);
           // Store login information
           await storeLoginInfo(responseData['user']);
 
+          // Debug print to check the user id
+          print('User ID from response: ${responseData['user']['userId']}');
+
+          // Ensure the user id is an integer
+          final userId =
+              int.tryParse(responseData['user']['userId'].toString());
+          if (userId == null) {
+            print('Error: Invalid user ID');
+            return;
+          }
+          print('Parsed User ID: $userId');
+
           // Update userId in MyAppState
-          Provider.of<MyAppState>(context, listen: false)
-              .updateUserId(responseData['user']['userId']);
+          Provider.of<MyAppState>(context, listen: false).updateUserId(userId);
           // Handle successful login
           if (responseData['user']['role'] == 'patient') {
             Navigator.pushReplacement(
@@ -100,8 +112,10 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> storeLoginInfo(Map<String, dynamic> user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', user['userId'].toString());
+
     print('user id: ${user['userId']}');
     print(prefs.getString('userId'));
+
     await prefs.setString('role', user['role']);
     print('role: ${user['role']}');
     //await prefs.setString('email', user['email']);

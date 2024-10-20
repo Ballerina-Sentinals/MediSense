@@ -1,67 +1,58 @@
-// import ballerina/io;
-// import ballerina/task;
-// import ballerina/time;
+import ballerina/http;
+import ballerina/sql;
 
-// public type Reminder record {|
-//     int reminderId;
-//     string reminderName;
-//     time:Civil startDate;
-//     int dateCount;
-// |};
+public type Time record {|
+    int hour;
+    int minute;
+    string am_pm;
 
-// //Function to calculate the difference in milliseconds between two Civil times
-// public function getMillisecondsDifference(time:Civil startTime, time:Civil endTime) returns int {
-//     return int(time:diff(startTime, endTime).toMillis());
-// }
+|};
 
-// Function to calculate the delay from the current time to the next occurrence of the alarm
-// public function calculateInitialDelay(time:Civil startTime) returns int {
-//     time:Utc currentTime = time:utcNow();
-//     time:Civil now = time:utcToCivil(currentTime);
+public type Reminder record {|
+    int user_id;
+    string time;
+    string date;
+    string description;
+|};
 
-//     time:Civil nextOccurrence;
+public type View_Reminder record {|
+    int reminder_id;
+    string time;
+    string date;
+    string description;
+|};
 
-//      Check if the alarm time is today or tomorrow
-//     if (now.hour < startTime.hour || (now.hour == startTime.hour && now.minute < startTime.minute)) {
-//         // Alarm will trigger later today
-//         nextOccurrence = { year: now.year, month: now.month, day: now.day, hour: startTime.hour, minute: startTime.minute };
-//     } else {
-//         nextOccurrence = { year: now.year, month: now.month, day: now.day + 1, hour: startTime.hour, minute: startTime.minute };
-//     }
+public function createErrorResponse(int statusCode, string message) returns http:Response {
+    http:Response response = new;
+    response.statusCode = statusCode;
+    response.setJsonPayload({"error": message});
+    return response;
+}
 
-//     Use the new function to get the difference in milliseconds
-//     return getMillisecondsDifference(now, nextOccurrence);
-// }
+public function create_reminder(Reminder new_reminder, sql:Client dbClient) returns http:Response|error? {
+    sql:ParameterizedQuery query = `INSERT INTO reminders (user_id, time, date, record) VALUES (${new_reminder.user_id},${new_reminder.time},${new_reminder.date}, ${new_reminder.description});`;
+    sql:ExecutionResult|error result = check dbClient->execute(query);
+    if result is sql:Error {
+        return createErrorResponse(500, "Internal server error");
+    }
+    http:Response response = new;
+    response.statusCode = 201;
+    response.setJsonPayload({"message": "Reminder created successfully"});
+    return response;
+}
 
-// // Function to schedule the recurring alarm
-// public function setRecurringAlarm(time:Civil startTime, int daysToRepeat) {
-//     Calculate the initial delay for the first occurrence
-//     int initialDelay = calculateInitialDelay(startTime);
-    
-//      Set the interval to 24 hours (in milliseconds)
-//     int interval = 86400000; // 24 hours in milliseconds
+public function view_reminders(string date, int user_id, sql:Client dbClient) returns error|View_Reminder[] {
+    sql:ParameterizedQuery query = `SELECT reminder_id, date, time, record as description FROM reminders WHERE date = ${date} AND user_id = ${user_id};`;
+    stream<View_Reminder, sql:Error?> resultStream = dbClient->query(query);
+    View_Reminder[] reminders = [];
 
-//      Set up a counter to stop after the specified number of days
-//     int count = 0;
+    error? e = resultStream.forEach(function(View_Reminder reminder) {
+        reminders.push(reminder);
+    });
 
-//      Define the timer configuration
-//     task:TimerConfiguration timerConfig = {
-//         initialDelayInMillis: initialDelay,
-//         intervalInMillis: interval
-//     };
+    if (e is error) {
+        return e; // Return the error if something goes wrong.
+    }
+    return reminders;
 
-//      Create the timer to trigger the alarm every day
-//     task:Timer timer = new(function () {
-//         if (count < daysToRepeat) {
-//             io:println("Alarm triggered for day ", count + 1);
-//             count += 1;
-//         } else {
-//             // Stop the timer after the required number of repetitions
-//             timer.stop();
-//             io:println("Alarm stopped after ", daysToRepeat, " days.");
-//         }
-//     }, timerConfig);
-
-//     io:println("Alarm is set to start at ", startTime.hour, ":", startTime.minute, " and repeat for ", daysToRepeat, " days.");
-// }
-
+}

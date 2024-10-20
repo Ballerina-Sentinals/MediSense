@@ -1,7 +1,8 @@
-import server.appoinments;
+import server.appointments;
 import server.chat_system;
 import server.locator;
 import server.login;
+import server.reminders;
 import server.user;
 
 import ballerina/http;
@@ -73,18 +74,38 @@ service / on loginListener {
 
     }
 
-    resource function post new_appoinment(appoinment new_app) returns http:Response|error {
-        return appoinments:create_appoinment(new_app, dbClient1);
+    resource function post new_appoinment(appointment new_app) returns http:Response|error {
+        return appointments:create_appointment(new_app, dbClient1);
 
     }
 
-    resource function get doc_appoinment/[int user_id](string date) returns table<appoinment> key(appoinment_id)|error {
-        return appoinments:view_all(user_id, date, dbClient1);
+    resource function get doc_appoinment/[int user_id]/[string date]() returns table<view_p> key(appointment_id)|error {
+        return appointments:view_all(user_id, date, dbClient1);
 
     }
 
     resource function put appoinment_done/[int appoinment_id]() returns http:Response|sql:Error {
-        return appoinments:complete_appo(appoinment_id, dbClient1);
+        return appointments:complete_appo(appoinment_id, dbClient1);
+
+    }
+
+    resource function get doc_appoinment_booked/[int user_id]/[string date]() returns table<appointments:view_p> key(appointment_id)|error {
+        return appointments:view_all_booked(user_id, date, dbClient1);
+
+    }
+
+    resource function post add_reminder(Reminder new_reminder) returns http:Response|error? {
+        return reminders:create_reminder(new_reminder, dbClient1);
+
+    }
+
+    resource function get view_reminder/[int user_id]/[string date]() returns error|reminders:View_Reminder[] {
+        return reminders:view_reminders(date, user_id, dbClient1);
+
+    }
+
+    resource function get view_appointments/[int user_id]/[string date]() returns error|table<appointments:view_appo> key(appointment_id) {
+        return appointments:view_patient_appo(user_id, date, dbClient1);
 
     }
 

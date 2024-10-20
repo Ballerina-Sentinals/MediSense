@@ -1,7 +1,6 @@
 import 'package:client/Patient_Diary/working_days.dart';
 import 'package:client/Resources/assets.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../App/app.dart';
@@ -15,23 +14,48 @@ class DocHomePageGenerator extends StatefulWidget {
 }
 
 class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
-  Map<String, dynamic> patients = {};
+  Map<dynamic, dynamic> patients = {};
   final date = DateTime.now().toString().substring(0, 10);
-  Set<String> selectedPatients = Set<String>();
+  Set<String> selectedPatients = <String>{};
 
   Future<void> fetchPatients(String userId, String date) async {
     print('fetchPatients function called with userId: $userId and date: $date');
-    final response = await http
-        .get(Uri.parse('http://10.0.2.2:8080/patient-diary/$userId/$date'));
+    final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/doc_appoinment_booked/$userId/$date'));
 
     if (response.statusCode == 200) {
       setState(() {
-        patients = json.decode(response.body);
+        List<dynamic> patientsList = json.decode(response.body);
+        print(patientsList);
+        print("//////////////////////////////////////////////");
+        for (var patient in patientsList) {
+          patients[patient['name']] = {
+            'number': patient['number'],
+            'status': patient['status'],
+            'appointment_id': patient['appointment_id'],
+          };
+        }
+
         print('Patients are $patients');
         print("//////////////////////////////////////////////");
       });
     } else {
       throw Exception('Failed to load patients');
+    }
+  }
+
+  Future<void> updateAppointmentStatus(int appointmentId) async {
+    final response = await http.put(
+      Uri.parse('http://10.0.2.2:8080/appoinment_done/$appointmentId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Appointment status updated successfully');
+    } else {
+      throw Exception('Failed to update appointment status');
     }
   }
 
@@ -52,12 +76,6 @@ class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
             'lib/Resources/images/DocHomeBG.jpg',
             fit: BoxFit.cover,
           ),
-          // BackdropFilter(
-          //   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          //   child: Container(
-          //     color: Colors.white.withOpacity(0.0),
-          //   ),
-          // ),
           Column(
             children: [
               Row(
@@ -80,10 +98,11 @@ class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
               Row(
                 children: [
                   const SizedBox(width: 20),
-                  ImageCard(text_: "", image: "lib/Resources/images/logo.png"),
+                  ImageCard(text_: "", image: "lib/Resources/images/doc1.jpg"),
                   DateCard(
                     date: DateTime.now(),
-                    color: Colors.blue, // Customize the color here
+                    color: const Color.fromARGB(
+                        255, 23, 113, 104), // Customize the color here
                   ),
                 ],
               ),
@@ -158,6 +177,9 @@ class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
                                                 : Colors.grey),
                                         onPressed: () {
                                           setState(() {
+                                            updateAppointmentStatus(
+                                                patientDetails[
+                                                    'appointment_id']);
                                             if (selectedPatients
                                                 .contains(patientName)) {
                                               selectedPatients
@@ -198,7 +220,7 @@ class _DocHomePageGeneratorState extends State<DocHomePageGenerator> {
                   );
                 },
                 buttonText: "Set working days",
-                image: 'lib/Resources/images/stethoscope1.png',
+                image: 'lib/Resources/images/docwork2.jpg',
               ),
             ],
           ),
