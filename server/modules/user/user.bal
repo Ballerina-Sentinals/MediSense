@@ -1,7 +1,6 @@
 import ballerina/http;
 import ballerina/io;
 import ballerina/sql;
-import ballerina/time;
 import ballerinax/mysql;
 
 public type Patient record {
@@ -29,12 +28,12 @@ public type Pharmacy record {
 };
 
 public type Patient_view record {
-    int patient_id;
+    //int patient_id;
     int user_id;
     string name;
-    time:Civil dob;
-    string nic;
-    string emergency_contact;
+    string dob;
+    //string nic;
+    //string emergency_contact;
     decimal weight;
     decimal height;
     string allergies;
@@ -75,7 +74,7 @@ public function createErrorResponse(int statusCode, string message) returns http
 
 public function patient_info(int user_id, mysql:Client dbClient) returns Patient_view|error?|http:Response {
     // Prepare the query
-    sql:ParameterizedQuery query = `SELECT * FROM patients WHERE id = ${user_id}`;
+    sql:ParameterizedQuery query = `SELECT * FROM patient_info WHERE user_id = ${user_id}`;
 
     Patient_view|error? resultStream = dbClient->queryRow(query);
 

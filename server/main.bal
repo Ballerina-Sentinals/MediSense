@@ -1,7 +1,8 @@
-import server.community;
+import server.appoinments;
 import server.chat_system;
 import server.locator;
 import server.login;
+import server.reminders;
 import server.user;
 import ballerina/http;
 import ballerina/sql;
@@ -67,46 +68,19 @@ service / on loginListener {
 
     }
 
-    resource function get getPosts(string? category) returns Post[]|error{
-        if category is string {
-            return community:get_posts(category, dbClient1);
-        }
-        return community:get_posts((),dbClient1);
+    resource function post new_appoinment(appoinment new_app) returns http:Response|error {
+        return appoinments:create_appoinment(new_app, dbClient1);
+
     }
 
-    resource function get getPostByIndex (int index) returns Post|http:NotFound{
-        return community:get_post_byindex(index, dbClient1);
-    }
-    
-    resource function post createPost(NewPost post) returns PostCreated|http:BadRequest|error {
-        return community:create_post(post, dbClient1);
+    resource function get doc_appoinment/[int user_id](string date) returns table<appoinment> key(appoinment_id)|error {
+        return appoinments:view_all(user_id, date, dbClient1);
+
     }
 
-    resource function delete deletePost(int index) returns http:NoContent|error {
-        return community:delete_post(index, dbClient1);
-        
+    resource function put appoinment_done/[int appoinment_id]() returns http:Response|sql:Error {
+        return appoinments:complete_appo(appoinment_id, dbClient1);
+
     }
 
-    resource function post createComment(NewComment comment) returns CommentCreated|http:BadRequest|error {
-        return community:add_comment(comment, dbClient1);
-    }
-
-    resource function get getComments(int PostIndex) returns Comment[]|http:NotFound|error {
-        return community:get_comments(PostIndex, dbClient1);
-    }
-
-    resource function get postWithComments(int index) returns PostWithComments|http:NotFound|error {
-        return community:get_post_with_comments(index, dbClient1);
-    }
-
-    resource function delete deleteComment(int index) returns http:NoContent|error {
-        return community:delete_comment(index, dbClient1);
-    }
-
-    resource function get getPostWithMeta(int index) returns PostWithMeta|http:NotFound|error {
-        return community:get_post_with_meta(index, dbClient1);
-    }
-
-    
-
-}   
+}

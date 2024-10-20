@@ -1,7 +1,4 @@
 import ballerina/time;
-import ballerina/http;
-import ballerina/sql;
-
 
 public type usersignup record {|
     string username;
@@ -54,31 +51,8 @@ public type locator record {|
 
 |};
 
-
-
-type User record {|
-    int user_id;
-    
-|};
-
-type Reminder record {|
-    int user_id;
-    Record recordInfo;
-    string date;
-    string time;
-|};
-
-type Record record {|
-    string record_data;
-|};
-
-type ReminderCreated record {|
-    *http:Created;
-     Reminder body;
-|};
-
-public type Appointment record {|
-    readonly int appointment_id;
+public type appoinment record {|
+    readonly int appoinment_id;
     int patient_id;
     int doctor_id;
     int number;
@@ -87,14 +61,24 @@ public type Appointment record {|
     string status;
 |};
 
-public type PatientView record {|
+public type view_p record {|
+    readonly int appointment_id;
+    string name;
+    int number;
+    int doctor_id;
+    string date;
+    string status;
+
+|};
+
+public type Patient_view record {
     int patient_id;
     int user_id;
     string name;
-    time:Civil dob;
-    string nic;
-    int doctor_id;
-    int emergency_contact;
+    string dob;
+    //string nic;
+    //int doctor_id;
+    //int emergency_contact;
     decimal weight;
     decimal height;
     string allergies;
@@ -118,68 +102,4 @@ public type PharmacyView record {|
     string street;
     string con_number;
     decimal rating;
-|};
-
-type Post record {|
-    @sql:Column {name: "id"}
-    readonly int id;
-    @sql:Column {name: "user_id"}
-    int userId;
-    @sql:Column {name: "content"}
-    string description;
-    @sql:Column {name: "tags"}
-    string tags;
-    @sql:Column {name: "category"}
-    string category;
-|};
-
-type Comment record {|
-    @sql:Column {name: "id"}
-    readonly int id;
-    @sql:Column {name: "post_id"}
-    int postId;
-    @sql:Column {name: "user_id"}
-    int userId;
-    @sql:Column {name: "content"}
-    string description;
-    |};
-
-public type NewPost record {|
-    int user_Id;
-    string description;
-    string tags;
-    string category;
-|};
-
-public type PostCreated record {|
-    *http:Created;
-    Post body;
-    |};
-
-type CommentCreated record {|
-    *http:Created;
-     Comment body;
-    |};
-
-type NewComment record {|
-    int postId;
-    int userId;
-    string description;
-    |};
-
-type PostWithMeta record {|
-    int id;
-    int userId;
-    string description;
-    Meta meta;
-|};
-
-type Meta record {|
-    string[] tags;
-    string category;
-|};
-
-type PostWithComments record {|
-    Post post;
-    Comment[] comments;
-|};
+};

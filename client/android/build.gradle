@@ -1,14 +1,3 @@
-buildscript {
-    ext.kotlin_version = '1.8.0' // Ensure this matches the version expected by your dependencies
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
 allprojects {
     repositories {
         google()
@@ -22,6 +11,10 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+// Ensure shared_preferences_android has the correct build directory
+project(':shared_preferences_android') {
+    buildDir = "${rootProject.buildDir}/shared_preferences_android"
 }
 
 tasks.register("clean", Delete) {

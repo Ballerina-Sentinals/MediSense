@@ -11,8 +11,7 @@ import '../App/app.dart';
 class PharmFirstTimeLoginPage extends StatefulWidget {
   final String userId;
 
-  const PharmFirstTimeLoginPage({Key? key, required this.userId})
-      : super(key: key);
+  const PharmFirstTimeLoginPage({super.key, required this.userId});
 
   @override
   _PharmFirstTimeLoginPage createState() => _PharmFirstTimeLoginPage();

@@ -11,8 +11,7 @@ import '../App/doc_home_page.dart';
 class DocFirstTimeLoginPage extends StatefulWidget {
   final String userId;
 
-  const DocFirstTimeLoginPage({Key? key, required this.userId})
-      : super(key: key);
+  const DocFirstTimeLoginPage({super.key, required this.userId});
 
   @override
   _DocFirstTimeLoginPage createState() => _DocFirstTimeLoginPage();

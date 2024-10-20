@@ -62,7 +62,7 @@ class _PillOrderGeneratorState extends State<PillOrderGenerator> {
                       selectedDay.toIso8601String().split('T')[0];
                   print(
                       'appState.userId.toString() is ${appState.userId.toString()}');
-                  print('formatted Date is ${formattedDate}');
+                  print('formatted Date is $formattedDate');
 
                   fetchCalorieDiary(appState.userId.toString(), formattedDate);
                 },

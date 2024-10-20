@@ -78,24 +78,24 @@ class MyAppState extends ChangeNotifier {
 
   void updateProfileFromJson(Map<String, dynamic> json) {
     userId = json['user_id'] ?? userId;
-    username = json['username'] ?? username;
+    //username = json['username'] ?? username;
     name = json['name'] ?? name;
     email = json['email'] ?? email;
     gender = json['gender'] ?? gender;
-    dateOfBirth = json['date_of_birth'] != null
-        ? DateTime.parse(json['date_of_birth'])
-        : dateOfBirth;
-    height = json['height_cm'] != null
-        ? double.parse(json['height_cm'].toString())
+    dateOfBirth =
+        json['dob'] != null ? DateTime.parse(json['dob']) : dateOfBirth;
+    height = json['height'] != null
+        ? double.parse(json['height'].toString())
         : height;
-    weight = json['weight_kg'] != null
-        ? double.parse(json['weight_kg'].toString())
+    weight = json['weight'] != null
+        ? double.parse(json['weight'].toString())
         : weight;
+    allergies = json['allergies'] ?? allergies;
   }
 
   void updateDocProfileFromJson(Map<String, dynamic> json) {
     userId = json['user_id'] ?? userId;
-    username = json['username'] ?? username;
+    //username = json['username'] ?? username;
     name = json['name'] ?? name;
     email = json['email'] ?? email;
     doctor_license = json['doctor_license'] ?? doctor_license;
@@ -105,13 +105,14 @@ class MyAppState extends ChangeNotifier {
   Map<String, dynamic> toJson() {
     return {
       'user_id': userId,
-      'username': username,
+      //'username': username,
       'name': name,
       'email': email,
       'gender': gender,
       'date_of_birth': dateOfBirth.toIso8601String(),
       'height_cm': height,
       'weight_kg': weight,
+      'allergies': allergies,
     };
   }
 
@@ -166,6 +167,7 @@ class MyAppState extends ChangeNotifier {
     dateOfBirth = DateTime.now();
     height = 0;
     weight = 0;
+    allergies = '';
     // Reset other variables as needed
     notifyListeners();
   }
