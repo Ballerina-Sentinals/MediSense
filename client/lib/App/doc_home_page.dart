@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+//import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import "../Home/doc_home_page_generator.dart";
 import "../Profile/profile_page.dart";
 import "../Authentication/login_page.dart";
+import "../Patient_Diary/patient_diary.dart";
 import 'app.dart';
 
 class DocHomePage extends StatefulWidget {
@@ -19,9 +21,10 @@ class _DocHomePageState extends State<DocHomePage> {
 
   final List<Widget> _pages = [
     const HomePage(),
+    const PatientDiary(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Profile'];
+  final List<String> _titles = ['Home', 'Patient Diary', 'Profile'];
 
   void _handleLogout() async {
     try {
@@ -45,20 +48,11 @@ class _DocHomePageState extends State<DocHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 38, 126, 120),
         elevation: 1.0,
-        shadowColor: Colors.grey.shade400, // Set the shadow color
-        surfaceTintColor: Colors.white,
-
-        // title: Image.asset(
-        //   'lib/Resources/images/logo.png',
-        //   fit: BoxFit.contain,
-        //   height: 120,
-        // ),
-
         centerTitle: true,
         title: Text(_titles[_currentIndex],
-            style: const TextStyle(color: Colors.grey)),
+            style: const TextStyle(color: Color.fromARGB(255, 180, 233, 233))),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -85,6 +79,10 @@ class _DocHomePageState extends State<DocHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.sick),
+            label: 'Patient Diary',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
           ),
@@ -100,6 +98,10 @@ class _DocHomePageState extends State<DocHomePage> {
 
 class HomePage extends DocHomePageGenerator {
   const HomePage({super.key});
+}
+
+class PatientDiary extends PatientDiaryGenerator {
+  const PatientDiary({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

@@ -43,15 +43,25 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.14.1
+  # flutter_launcher_icons: ^0.14.1
 
+# flutter_launcher_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   image_path: "lib/Resources/images/doc2.jpg"
+#   min_sdk_android: 21
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "lib/Resources/images/logo.png"
+#   min_sdk_android: 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 # flutter_launcher_icons:
 #   android: "launcher_icon"
 #   ios: true
-#   image_path: "assets/icon/icon.png"
+#   image_path: "lib/Resources/images/logo.png"
 #   min_sdk_android: 21
 
 flutter:
@@ -62,6 +72,14 @@ flutter:
   assets:
     - lib/Resources/images/001_blueCapsules.jpg
     - lib/Resources/images/logo.png
+    - lib/Resources/images/logo_H.png
+    - lib/Resources/images/stethoscope1.png
+    - lib/Resources/images/DocHomeBG.jpg
+    - lib/Resources/images/doc1.jpg
+    - lib/Resources/images/doc2.jpg
+    - lib/Resources/images/docwork1.jpg
+    - lib/Resources/images/docwork2.jpg
+    - lib/Resources/images/patient1.jpg
 
   fonts:
     - family: Montserrat

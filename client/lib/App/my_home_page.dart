@@ -1,4 +1,6 @@
+import 'package:client/Pill_Diary/appointments.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,9 +23,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const PillDiaryPage(),
+    const AppointmentsPage(),
     const ProfilePage(),
   ];
-  final List<String> _titles = ['Home', 'Pill Diary', 'Profile'];
+  final List<String> _titles = [
+    'Home',
+    'Pill Diary',
+    'Appointments',
+    'Profile'
+  ];
 
   void _handleLogout() async {
     try {
@@ -47,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 56, 147, 136),
         elevation: 1.0,
         shadowColor: Colors.grey.shade400, // Set the shadow color
         surfaceTintColor: Colors.white,
@@ -60,13 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
         centerTitle: true,
         title: Text(_titles[_currentIndex],
-            style: const TextStyle(color: Colors.grey)),
+            style: const TextStyle(color: Color.fromARGB(255, 194, 238, 238))),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromARGB(255, 39, 154, 135),
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 4) {
             _handleLogout();
           } else {
             setState(() {
@@ -74,11 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           }
         },
-        selectedItemColor: const Color.fromARGB(255, 46, 125, 100),
+        selectedItemColor: const Color.fromARGB(255, 211, 239, 155),
 
         // selectedItemColor: const Color.fromARGB(
         // 255, 125, 167, 255), // Set the color for selected items
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color.fromARGB(255, 176, 241, 236),
         type:
             BottomNavigationBarType.fixed, // Set the color for unselected items
         items: const [
@@ -88,8 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medication),
-            label: 'Pill Diary',
+            label: 'Reminders',
           ),
+          BottomNavigationBarItem(
+              icon: Icon(MdiIcons.stethoscope), // Use the Material Design Icons
+              label: 'Appointments'),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
@@ -110,6 +122,10 @@ class HomePage extends HomePageGenerator {
 
 class PillDiaryPage extends PillDiaryGenerator {
   const PillDiaryPage({super.key});
+}
+
+class AppointmentsPage extends AppointmentsPageGenerator {
+  const AppointmentsPage({super.key});
 }
 
 class ProfilePage extends ProfilePageGenerator {

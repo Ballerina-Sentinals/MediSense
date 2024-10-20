@@ -16,23 +16,42 @@ class PillDiaryGenerator extends StatefulWidget {
 
 class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
   Map<String, dynamic> pills = {};
+  Map<int, dynamic> reminders = {};
+
+  String date = "";
+
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> fetchCalorieDiary(String userId, String date) async {
-    final response = await http
-        .get(Uri.parse('http://10.0.2.2:3000/pill-diary/$userId/$date'));
+  Future<void> fetchReminders(String userId, String date) async {
+    try {
+      final response = await http
+          .get(Uri.parse('http://10.0.2.2:8080/view_reminder/$userId/$date'));
 
-    if (response.statusCode == 200) {
-      setState(() {
-        pills = json.decode(response.body);
-        print('Pill Diary is $pills');
-        print("//////////////////////////////////////////////");
-      });
-    } else {
-      throw Exception('Failed to load pill diary');
+      if (response.statusCode == 200) {
+        setState(() {
+          List<dynamic> reminderList = [];
+          reminders.clear();
+          reminderList = json.decode(response.body);
+          print('Reminders are $reminderList');
+          print("//////////////////////////////////////////////");
+
+          for (var reminder in reminderList) {
+            reminders[reminder['reminder_id']] = {
+              'date': reminder['date'],
+              'time': reminder['time'],
+              'description': reminder['description'],
+            };
+          }
+        });
+      } else {
+        print('Failed to load pill diary: ${response.statusCode}');
+        throw Exception('Failed to load pill diary');
+      }
+    } catch (e) {
+      print('Error fetching reminders: $e');
     }
   }
 
@@ -62,59 +81,95 @@ class _PillDiaryGeneratorState extends State<PillDiaryGenerator> {
                       selectedDay.toIso8601String().split('T')[0];
                   print(
                       'appState.userId.toString() is ${appState.userId.toString()}');
-                  print('formatted Date is ${formattedDate}');
-
-                  fetchCalorieDiary(appState.userId.toString(), formattedDate);
+                  print('formatted Date is $formattedDate');
+                  date = formattedDate;
+                  fetchReminders(appState.userId.toString(), formattedDate);
                 },
               ),
               const SizedBox(height: 60.0),
-              CustomExpandingWidgetVer3(
-                  listTitle: 'morning',
-                  units: 'pills',
-                  pairList: _getItemList('morning')),
-              const SizedBox(
-                height: 20,
-              ),
-              CustomExpandingWidgetVer3(
-                  listTitle: 'noon',
-                  units: 'pills',
-                  pairList: _getItemList('noon')),
-              const SizedBox(
-                height: 20,
-              ),
-              CustomExpandingWidgetVer3(
-                  listTitle: 'night',
-                  units: 'pills',
-                  pairList: _getItemList('night')),
-              const SizedBox(
-                height: 20,
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  color:
+                      const Color.fromARGB(255, 176, 230, 247).withOpacity(0.6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Center(
+                        child: Text(
+                          'Reminder List for $date',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24.0,
+                            color: const Color.fromARGB(255, 36, 114, 113),
+                          ),
+                        ),
+                      ),
+                      reminders.isNotEmpty
+                          ? Flexible(
+                              child: ListView.builder(
+                                padding: EdgeInsets.all(10.0),
+                                itemCount: reminders.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  int reminderId =
+                                      reminders.keys.elementAt(index);
+                                  Map<String, dynamic> reminderDetails =
+                                      reminders[reminderId];
+                                  return Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 5.0),
+                                    padding: EdgeInsets.all(15.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 5.0,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ListTile(
+                                      title: Text(
+                                        reminderDetails['date'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        'Time: ${reminderDetails['time']}, Description: ${reminderDetails['description']}',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(
+                                'No patients for $date',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color:
+                                      const Color.fromARGB(255, 255, 132, 95),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ]),
     );
-  }
-
-  Set<Map<String, double>> _getItemList(String mealType) {
-    if (pills.isEmpty || !pills.containsKey(mealType)) {
-      return {};
-    } else if (pills[mealType].isEmpty) {
-      return {
-        {"Meal Plan not selected for $mealType": 0.0}
-      };
-    } else {
-      var itemList = pills[mealType].map<Map<String, double>>((item) {
-        var itemName = item['name'] as String? ?? 'Unknown';
-        var itemCaloriesStr = item['total_calories'].toString();
-        var itemCalories = double.tryParse(itemCaloriesStr) ?? 0.0;
-        print('Item: $itemName, Calories: $itemCalories'); // Debug print
-
-        return {itemName: itemCalories};
-      }).toSet();
-
-      print('Item list for $mealType: $itemList');
-      return itemList;
-    }
   }
 }

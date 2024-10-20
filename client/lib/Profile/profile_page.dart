@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
   Future<void> _fetchUserProfile() async {
     var appState = context.read<MyAppState>();
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
+      Uri.parse('http://10.0.2.2:8080/patient_profile/${appState.userId}'),
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -57,7 +57,8 @@ class _ProfilePageState extends State<ProfilePageGenerator> {
     if (_formKey.currentState!.validate()) {
       var appState = context.read<MyAppState>();
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:3000/user-profile/${appState.userId}'),
+        Uri.parse(
+            'http://10.0.2.2:8080/update_patient_profile/${appState.userId}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
