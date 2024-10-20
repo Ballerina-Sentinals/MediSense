@@ -18,9 +18,59 @@ Tech Stack
         [There is no APIs]
     Payment Integration: []
 
+
 Installation
 Prerequisites
 
-    [Ballerina] installed
-    [Flutter] installed
-    [Mysql] setup (e.g., MySQL/PostgreSQL)
+    Ballerina: Install Ballerina (https://ballerina.io/)
+    Flutter: Install Flutter (https://flutter.dev/docs/get-started/install)
+    Database: Set up the database (e.g., MySQL)
+
+Backend Setup (Ballerina)
+
+    Clone the repository:
+    
+    bash
+git clone https://github.com/yourusername/medisense.git
+cd medisense/backend
+
+Install dependencies:
+
+bash
+
+ballerina pull
+
+Configure the database settings in Config.toml (update database URL, username, and password).
+
+Run the backend server:
+
+bash
+
+    ballerina run main.bal
+
+Frontend Setup (Flutter)
+
+    Navigate to the frontend directory:
+
+    bash
+
+cd medisense/frontend
+
+Install dependencies:
+
+bash
+
+flutter pub get
+
+Run the frontend application:
+
+bash
+
+    flutter run
+
+Usage
+
+    Register or log in as a patient.
+    Browse doctors and schedule appointments.
+    Order medications online from the pharmacy.
+    View appointment details, track pharmacy orders, and manage your profile.
